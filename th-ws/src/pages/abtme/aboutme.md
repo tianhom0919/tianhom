@@ -8,7 +8,7 @@ sidebar_position: 1
 
 - **Phone**: +60 16-416 8242  
 - **Email**: ength091902@gmail.com  
-- **Address**: 1918 Jalan Selasih 4, Taman Selasih, 09000, Kulim, Kedah  
+- **Location**: Kedah, Malaysia
 
 ---
 
