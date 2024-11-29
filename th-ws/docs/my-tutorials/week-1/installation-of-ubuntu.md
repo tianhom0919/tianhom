@@ -18,7 +18,7 @@ In this tutorial, I will guide you through the steps required to install Ubuntu 
 ## Steps
 
 ### Step 1: Download an Image of Ubuntu
-You can download an Ubuntu image file from [here](https://mirror.twds.com.tw/ubuntu-releases/). Select the version that you need and download will start autimatically.  
+You can download an Ubuntu image file from [here](https://mirror.twds.com.tw/ubuntu-releases/). Select the version that you need and download will start automatically.  
 
 ### Step 2: Create a Bootable USB Drive
 We cannot just copy the ISO file, we need a software to write ISO images to USB drives so that it is bootable. In this case, we will use [balenaEtcher](https://etcher.balena.io/) to write our downloaded ISO to a USB drive to create an installation media.  
