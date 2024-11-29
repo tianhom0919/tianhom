@@ -8,14 +8,9 @@ Hi there! I'm Eng Tian Hom, an electronic engineer with a passion for learning a
 
 ## What You'll Find Here:
 
-- **Tutorials**: Step-by-step guides on how to build projects, use different tools, and improve your coding skills.
+- **Tutorials**: Step-by-step guides on how to build projects and use different tools.
 - **Projects**: Learn about the projects I am working on and find resources for contributing.
 - **Blog**: Articles covering topics such as technology trends, tutorials, and lessons learned in my career.
 - **About Me**: A little more about who I am and my journey in tech.
 
-## About Me
-
-With years of experience in software engineering, I've worked on a variety of projects, including web applications, data science, and automation systems. My goal is to create content that helps others grow their technical skills.
-
 Feel free to explore the site, and don't hesitate to reach out if you have any questions!
-z
