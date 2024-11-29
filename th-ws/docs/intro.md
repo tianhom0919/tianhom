@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Welcome to Eng Tian Hom's Site!
 
-Hi there! I'm Eng Tian Hom, an electronic engineer with a passion for learning and sharing knowledge. On this site, I share my insights, tutorials, and resources on various topics, including programming, machine learning, and web development.
+Hi there! I'm Eng Tian Hom, an electronic engineer with a passion for learning and sharing knowledge. On this site, I share my insights, tutorials, and resources on various topics.
 
 ## What You'll Find Here:
 
