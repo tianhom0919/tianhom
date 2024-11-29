@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# Creating Dev Containers
+# 1-4 Creating Dev Containers
 
 In this tutorial, we will learn how to create Dev Containers in VS Code.
 
@@ -45,3 +45,8 @@ Now, you will need to configure your Dev Container, select **"Node.js & JavaScri
 
 ![VSCode1](./img/devcon1.png)
 
+---
+
+## References
+
+[Developing Inside a Container](https://code.visualstudio.com/docs/devcontainers/containers)

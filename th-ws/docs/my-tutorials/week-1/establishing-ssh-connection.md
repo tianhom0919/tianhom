@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# Establishing an SSH Connection
+# 1-2 Establishing an SSH Connection
 
 In this tutorial, you will learn how to establish an SSH connection between your personal PC and a remote PC running Ubuntu.
 
