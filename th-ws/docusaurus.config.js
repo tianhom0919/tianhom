@@ -25,6 +25,29 @@ const config = {
   organizationName: 'tianhom0919', // Usually your GitHub org/user name.
   projectName: 'tianhom', // Usually your repo name.
 
+  headTags: [
+    {
+      tagName: "link",
+      attributes: {
+        rel: "preload",
+        href: "static/fonts/Hubot-Sans.woff2",
+        as: "font",
+        type: "font/woff2",
+        crossorigin: "anonymous",
+      },
+    },
+    {
+      tagName: "link",
+      attributes: {
+        rel: "preload",
+        href: "static/fonts/Mono-Sans.woff2",
+        as: "font",
+        type: "font/woff2",
+        crossorigin: "anonymous",
+      },
+    },
+  ],
+
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
