@@ -11,7 +11,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Eng Tian Hom's Site",
-  tagline: 'Welcome to my site!',
+  tagline: 'There is no end to education.',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -69,9 +69,14 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            "https://github.com/tianhom0919/tianhom/tree/main/th-ws",
         },
-        blog: false,
+        blog: {
+          blogSidebarTitle: "Posts",
+          showReadingTime: true,
+          editUrl:
+            "https://github.com/tianhom0919/tianhom/tree/main/th-ws",
+        },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -98,15 +103,26 @@ const config = {
             label: 'My Tutorials',
           },
           { 
-            to: '/abtme/aboutme', 
+            to: '/aboutme', 
             label: 'About Me', 
-            position: 'left'},
+            position: 'left'
+          },
+          {
+            to: '/blog', 
+            label: 'Blog', 
+            position: 'left'
+          },
           {
             href: 'https://github.com/tianhom0919',
             label: 'GitHub',
             position: 'right',
           },
         ],
+      },
+      docs: {
+        sidebar: {
+          hideable: true,
+        },
       },
       footer: {
         style: 'dark',
