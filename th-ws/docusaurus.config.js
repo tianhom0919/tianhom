@@ -76,6 +76,7 @@ const config = {
           showReadingTime: true,
           editUrl:
             "https://github.com/tianhom0919/tianhom/tree/main/th-ws",
+          truncateMarker: /<!--\s*(truncate)\s*-->/,
         },
         theme: {
           customCss: './src/css/custom.css',
