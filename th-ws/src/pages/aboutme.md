@@ -44,7 +44,7 @@ I am a college student with a motivated attitude and a variety of skills. I exce
   - Designed a sensor-based system using a microcontroller to optimize traffic light control and streetlight energy efficiency.  
 
 ### SPM (5As)  
-**SMJK Jit Si | 2015 - 2019**
+**SMJK Jit Sin | 2015 - 2019**
 
 ---
 
@@ -76,7 +76,6 @@ I am a college student with a motivated attitude and a variety of skills. I exce
   - Represented TARUMT Penang for MASISWA Games (Futsal).  
   - **MCFA Cup 2022**: Runner-up.  
   - **Teoh Ah Lean Cup 2023**: Champions.  
-
 - **Electronic Engineering Society Fundraising Event**  
   - Marketed the event on social media.  
   - Managed the drinks booth.  
@@ -89,7 +88,6 @@ I am a college student with a motivated attitude and a variety of skills. I exce
    - Assistant Professor  
    - Email: tenghc@tarc.edu.my  
    - Phone: +60 16-861 3503  
-
 2. **Dr. Nur Farhanah Binti Zulkipli**  
    - Assistant Professor  
    - Email: nurfarhanahz@tarc.edu.my  
