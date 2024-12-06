@@ -93,7 +93,7 @@ const config = {
         title: 'Eng Tian Hom',
         logo: {
           alt: 'My Site Logo',
-          src: 'img/logo.svg',
+          src: 'https://github.com/tianhom0919.png',
         },
         items: [
           {
