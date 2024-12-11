@@ -95,7 +95,7 @@ const config = {
         logo: {
           alt: 'My Site Logo',
           src: 'https://github.com/tianhom0919.png',
-          style: {borderRadius: '10%' },
+          style: {borderRadius: '50%' },
         },
         items: [
           {
