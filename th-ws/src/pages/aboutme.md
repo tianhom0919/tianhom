@@ -6,7 +6,6 @@ sidebar_position: 1
 
 ## Contact Information
 
-- **Phone**: +60 16-416 8242  
 - **Email**: ength091902@gmail.com  
 - **Location**: Kedah, Malaysia
 
