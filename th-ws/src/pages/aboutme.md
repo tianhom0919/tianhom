@@ -59,7 +59,7 @@ I am a college student with a motivated attitude and a variety of skills. I exce
 ### Industrial Trainee  
 **Infineon Technologies (Kulim) Sdn. Bhd. | Kulim, Kedah | Jan 2023 - May 2023**  
 - Set up and calibrated wafer dicing equipment.  
-- Troubleshot machine breakdowns, minimized downtime, and maximized output.  
+- Troubleshoot machine breakdowns, minimized downtime, and maximized output.  
 - Performed performance analysis, blade changing, and preventive maintenance.  
 
 ### Part-time Manufacturing Operator  

@@ -104,6 +104,12 @@ const config = {
             position: 'left',
             label: 'My Tutorials',
           },
+          {
+            type: 'docSidebar',
+            sidebarId: 'dumpSidebar',
+            position: 'left',
+            label: 'Dump',
+          },
           { 
             to: '/aboutme', 
             label: 'About Me', 
