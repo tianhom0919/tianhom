@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkth_ws=self.webpackChunkth_ws||[]).push([[9542],{2403:e=>{e.exports=JSON.parse('{"categoryGeneratedIndex":{"title":"My Docs","slug":"/category/my-docs","permalink":"/tianhom/docs/category/my-docs","sidebar":"dumpSidebar","navigation":{"next":{"title":"Git Commit Best Practices","permalink":"/tianhom/docs/dump/my-docs/MY_1-1"}}}}')}}]);
