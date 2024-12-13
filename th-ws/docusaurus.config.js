@@ -132,6 +132,14 @@ const config = {
           hideable: true,
         },
       },
+      algolia: {
+        // Search only API key
+        apiKey: "dab0daae85eb4a6b05722fb0310a43ce",
+        indexName: "tianhom0919io",
+        appId: "EIU2FC21C0",
+        contextualSearch: false,
+        debug: false,
+      },
       footer: {
         style: 'dark',
         links: [
