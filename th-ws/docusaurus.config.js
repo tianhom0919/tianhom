@@ -92,6 +92,7 @@ const config = {
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
         title: 'Eng Tian Hom',
+        hideOnScroll: true,
         logo: {
           alt: 'My Site Logo',
           src: 'https://github.com/tianhom0919.png',
