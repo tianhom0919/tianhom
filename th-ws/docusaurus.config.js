@@ -130,6 +130,7 @@ const config = {
       docs: {
         sidebar: {
           hideable: true,
+          autoCollapseCategories: true,
         },
       },
       algolia: {
@@ -139,6 +140,7 @@ const config = {
         appId: "EIU2FC21C0",
         contextualSearch: false,
         debug: false,
+        searchPagePath: 'search',
       },
       footer: {
         style: 'dark',

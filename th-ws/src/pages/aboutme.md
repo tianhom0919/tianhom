@@ -86,8 +86,6 @@ I am a college student with a motivated attitude and a variety of skills. I exce
 1. **Ts. Dr. Teng Howe Cheng**  
    - Assistant Professor  
    - Email: tenghc@tarc.edu.my  
-   - Phone: +60 16-861 3503  
 2. **Dr. Nur Farhanah Binti Zulkipli**  
    - Assistant Professor  
    - Email: nurfarhanahz@tarc.edu.my  
-   - Phone: +60 19-352 5272  
