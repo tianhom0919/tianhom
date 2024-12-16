@@ -6,7 +6,7 @@ sidebar_position: 1
 
 Hi there! I'm Eng Tian Hom, an electronic engineer with a passion for learning and sharing knowledge. On this site, I share my insights, tutorials, and resources on various topics.
 
-## What You'll Find Here:
+## What You'll Find Here
 
 - **Tutorials**: Step-by-step guides on how to build projects and use different tools.
 - **Projects**: Learn about the projects I am working on and find resources for contributing.
