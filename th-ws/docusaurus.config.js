@@ -100,26 +100,33 @@ const config = {
         },
         items: [
           {
-            type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
+            type: 'dropdown',
+            label: 'Documentations',
+            items: [
+              {
+                type: 'docSidebar',
+                sidebarId: 'tutorialSidebar',
+                position: 'left',
+                label: 'My Tutorials',
+              },
+              {
+                type: 'docSidebar',
+                sidebarId: 'dumpSidebar',
+                position: 'left',
+                label: 'Dump',
+              },
+              { 
+                to: '/aboutme', 
+                label: 'About Me', 
+                position: 'left'
+              },
+            ],
             position: 'left',
-            label: 'My Tutorials',
-          },
-          {
-            type: 'docSidebar',
-            sidebarId: 'dumpSidebar',
-            position: 'left',
-            label: 'Dump',
-          },
-          { 
-            to: '/aboutme', 
-            label: 'About Me', 
-            position: 'left'
           },
           {
             to: '/blog', 
             label: 'Blog', 
-            position: 'left'
+            position: 'left',
           },
           {
             href: 'https://github.com/tianhom0919',
