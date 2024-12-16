@@ -100,20 +100,6 @@ const config = {
         },
         items: [
           {
-            type: 'dropdown',
-            label: 'Documentations',
-            items: [
-              {
-                label: 'MCUT Tutorials',
-                to: '/my-tutorials/mcut-tutorials',
-              },
-              {
-                label: 'Other Tutorials',
-                to: '/my-tutorials/other-tutorials',
-              },
-            ]
-          },
-          {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
