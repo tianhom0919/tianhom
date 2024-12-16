@@ -36,7 +36,7 @@
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
-:root {
+:root [data-theme='dark'] {
   --ifm-color-primary: #a56dd9; /* Base color */
   --ifm-color-primary-dark: #8e5cbd; /* Slightly darker */
   --ifm-color-primary-darker: #7749a2; /* Darker */
