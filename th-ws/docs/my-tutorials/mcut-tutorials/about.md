@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # About MCUT Tutorials
 
-MCUT tutorials provides a comprehensive guide to implement a MOIL image application on an embedded system. It covers essential hardware and software preparation, development setup, and step-by-step instructions to achieve various objectives using the Renesas RZ/G2L Evaluation Kit.
+MCUT Tutorials provides a comprehensive guide to implement a MOIL image application on an embedded system. It covers essential hardware and software preparation, development setup, and step-by-step instructions to achieve various objectives using the Renesas RZ/G2L Evaluation Kit.
 
 ---
 
