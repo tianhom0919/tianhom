@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkth_ws=self.webpackChunkth_ws||[]).push([[902],{3362:e=>{e.exports=JSON.parse('{"categoryGeneratedIndex":{"title":"Misc.","slug":"/category/misc","permalink":"/tianhom/docs/category/misc","sidebar":"dumpSidebar","navigation":{"next":{"title":"#1","permalink":"/tianhom/docs/dump/others/OT_1-1"}}}}')}}]);
