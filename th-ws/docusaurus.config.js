@@ -107,9 +107,9 @@ const config = {
           },
           {
             type: 'docSidebar',
-            sidebarId: 'dumpSidebar',
+            sidebarId: 'mydocsSidebar',
             position: 'left',
-            label: 'Dump',
+            label: 'My Docs',
           },
           { 
             to: '/aboutme', 
