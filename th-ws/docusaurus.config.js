@@ -104,29 +104,36 @@ const config = {
             label: 'Documentations',
             items: [
               {
-                type: 'docSidebar',
-                sidebarId: 'tutorialSidebar',
-                position: 'left',
-                label: 'My Tutorials',
+                label: 'MCUT Tutorials',
+                to: '/my-tutorials/mcut-tutorials',
               },
               {
-                type: 'docSidebar',
-                sidebarId: 'dumpSidebar',
-                position: 'left',
-                label: 'Dump',
+                label: 'Other Tutorials',
+                to: '/my-tutorials/other-tutorials',
               },
-              { 
-                to: '/aboutme', 
-                label: 'About Me', 
-                position: 'left'
-              },
-            ],
+            ]
+          },
+          {
+            type: 'docSidebar',
+            sidebarId: 'tutorialSidebar',
             position: 'left',
+            label: 'MCUT Tutorials',
+          },
+          {
+            type: 'docSidebar',
+            sidebarId: 'dumpSidebar',
+            position: 'left',
+            label: 'Dump',
+          },
+          { 
+            to: '/aboutme', 
+            label: 'About Me', 
+            position: 'left'
           },
           {
             to: '/blog', 
             label: 'Blog', 
-            position: 'left',
+            position: 'left'
           },
           {
             href: 'https://github.com/tianhom0919',
