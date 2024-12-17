@@ -103,7 +103,7 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
-            label: 'MCUT Tutorials',
+            label: 'My Tutorials',
           },
           {
             type: 'docSidebar',
