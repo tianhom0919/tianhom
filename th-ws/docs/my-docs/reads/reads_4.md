@@ -18,7 +18,7 @@ The patch file contains specific markers that indicate which lines to add, remov
 
 The header contains metadata about the files being compared:
 
-**File paths**: Paths to the old and new files.
+**File paths**: Paths to the old and new files.  
 **Timestamps**: Optional, showing when each file was last modified.
 
 Example:
@@ -132,7 +132,7 @@ If you use `-p1`, the first directory component (`a/`) is stripped, leaving `src
 - `-p2`: Strips the first two components, useful when deeper directories are included in the patch.
 
 
-## Why Are `a/` and`b/` Prefixes Used
+## Why Are `a/` and `b/` Prefixes Used
 
 These prefixes are conventions introduced by version control systems like Git to provide clarity and consistency when comparing versions.
 
@@ -144,9 +144,11 @@ These prefixes are conventions introduced by version control systems like Git to
 Matching directly could lead to:
 
 **Ambiguity**  
-In complex projects with similar file names across directories, prefixes clarify which version of a file is being referenced.  
+In complex projects with similar file names across directories, prefixes clarify which version of a file is being referenced. 
+
 **Incompatibility**  
 Git and other tools rely on these prefixes for operations like merges, rebases, and patches.  
+
 **Version Tracking**  
 The prefixes are critical in differentiating changes across renamed or moved files.  
 
