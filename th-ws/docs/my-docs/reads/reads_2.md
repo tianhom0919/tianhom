@@ -42,3 +42,5 @@ If you call factorial(4), the call stack works like this:
 - A **stack** is a fundamental data structure used to manage program execution and function calls.
 - In recursive functions, the **call stack** tracks nested calls and ensures proper execution order (LIFO).
 - Failure to manage recursion properly (e.g., forgetting a base case) can result in a **stack overflow**, crashing the program.
+
+---
