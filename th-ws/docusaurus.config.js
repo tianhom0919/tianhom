@@ -94,6 +94,7 @@ const config = {
       disableSwitch: false, // Allow users to toggle between light and dark mode
       respectPrefersColorScheme: false, // Ignore the system's color scheme
       },
+      scrollToTop: true, // Add this line to enable the "Back to Top" button
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
