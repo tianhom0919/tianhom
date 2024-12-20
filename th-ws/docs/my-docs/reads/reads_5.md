@@ -5,6 +5,7 @@ sidebar_position: 5
 # Regular Expressions
 
 ## What Are Regular Expressions?
+
 Regular expressions (commonly abbreviated as `regex` or `regexp`) are sequences of characters that define search patterns. They are like powerful search tools used to match, find, and manipulate text based on specific patterns.
 
 In simpler terms, they allow you to:
@@ -18,6 +19,7 @@ Examples:
 - A regex like `^[a-z]+$` checks if a string contains only lowercase letters.
 
 ### Who Invented Regular Expressions?
+
 The concept of regular expressions was developed in the 1950s by American mathematician Stephen Cole Kleene. He introduced regular sets and the Kleene star (*), a mathematical notation used to describe patterns in strings, as part of his work on automata theory and formal language.
 
 Ken Thompson, a computer scientist, implemented regular expressions in the 1960s as part of early text-processing tools for Unix systems, making regex practical and accessible in computer science.
