@@ -17,9 +17,8 @@ The patch file contains specific markers that indicate which lines to add, remov
 ### Header Info
 
 The header contains metadata about the files being compared:
-
-**File paths**: Paths to the old and new files.  
-**Timestamps**: Optional, showing when each file was last modified.
+- **File paths**: Paths to the old and new files.  
+- **Timestamps**: Optional, showing when each file was last modified.
 
 Example:
 
