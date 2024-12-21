@@ -107,3 +107,5 @@ Next, it captures an email:
 - Matches the `@` symbol, followed by the domain and a top-level domain.
 - The `(?-i)` flag turns off case-insensitivity.
 - Finally, it captures a phone number in the format `(123-456-7890)` using parentheses and `\d{3}-\d{3}-\d{4}`.
+
+---
