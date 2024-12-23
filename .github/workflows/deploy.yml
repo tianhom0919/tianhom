@@ -31,6 +31,7 @@ jobs:
     - name: Deploy to GitHub Pages
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cd th-ws  # Navigate to the 'th-ws' directory again
         git config --global user.email ength091902@gmail.com
