@@ -28,6 +28,9 @@ jobs:
         cd th-ws  # Ensure you're in the 'th-ws' directory
         yarn build  # Build the Docusaurus site
 
+    - name: Check git remote URL
+      run: git remote -v  # Check the current remote URL
+
     - name: Deploy to GitHub Pages
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -37,4 +40,5 @@ jobs:
         git config --global user.email ength091902@gmail.com
         git config --global user.name tianhom0919
         git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git  # Authenticate with GitHub Token
+        git push --force origin gh-pages  # Push to the gh-pages branch directly
         GIT_USER=tianhom0919 yarn deploy  # Deploy the built site
