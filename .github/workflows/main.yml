@@ -1,0 +1,30 @@
+name: Build and Deploy Docusaurus to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Change to your source branch if different
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3  # Fetch your repository code
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20  # Ensure Node.js v20.x.x is used
+
+    - name: Install dependencies
+      run: yarn install  # Install dependencies listed in package.json
+
+    - name: Build the website
+      run: yarn build  # Build your Docusaurus site
+
+    - name: Deploy to GitHub Pages
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: yarn deploy  # Deploy the built site
