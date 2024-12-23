@@ -20,7 +20,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd th-ws  # Navigate to the 'th-ws' directory
+        cd th-ws
         yarn install  # Install dependencies using yarn
 
     - name: Build the website
