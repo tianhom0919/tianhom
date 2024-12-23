@@ -6,6 +6,6 @@ sidebar_position: 999
 
 ## What is a Placeholder?
 
-A placeholder is a temporary marker or symbol used to represent something that will be added, substituted, or specified later.
+A placeholder is a temporary marker or symbol used to represent something that will be added, substituted, or specified later. A
 
 ---
