@@ -13,16 +13,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3  # Fetch the repository code
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 20  # Use Node.js version 20
-
-    - name: Install dependencies
-      run: |
-        cd th-ws
-        yarn install  # Install dependencies using yarn
-
     - name: Build the website
       run: |
         cd th-ws  # Navigate to the 'th-ws' directory
@@ -33,4 +23,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cd th-ws  # Navigate to the 'th-ws' directory
-        yarn deploy  # Deploy the built site
+        GIT_USER=tianhom0919 yarn deploy  # Deploy the built site
