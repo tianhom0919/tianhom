@@ -25,8 +25,6 @@ Example:
 ```diff
 --- original_file.txt   2024-12-01 12:00:00
 +++ modified_file.txt   2024-12-02 14:30:00
----: Original file.
-+++: Modified file.
 ```
 
 ### Chunk Information
