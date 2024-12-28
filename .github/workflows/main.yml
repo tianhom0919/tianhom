@@ -23,11 +23,6 @@ jobs:
         cd th-ws
         yarn install
 
-    - name: Configure Git
-      run: |
-        git config --global user.email ength091902@gmail.com
-        git config --global user.name tianhom0919
-
     - name: Build Website
       run: |
         cd th-ws
@@ -38,4 +33,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cd th-ws
+        git config --global user.email ength091902@gmail.com
+        git config --global user.name tianhom0919
         yarn deploy
