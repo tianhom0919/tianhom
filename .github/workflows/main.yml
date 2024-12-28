@@ -35,4 +35,4 @@ jobs:
         cd th-ws
         git config --global user.email ength091902@gmail.com
         git config --global user.name tianhom0919
-        yarn deploy
+        GIT_USER=tianhom0919 yarn deploy
