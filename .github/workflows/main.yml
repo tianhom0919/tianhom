@@ -30,6 +30,10 @@ jobs:
 
     - name: Deploy to GitHub Pages
       env:
+        USE_SSH: false
+        GIT_USER: tianhom0919
+        CURRENT_BRANCH: main
+        DEPLOYMENT_BRANCH: gh-pages
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cd th-ws
