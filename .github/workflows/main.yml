@@ -1,0 +1,36 @@
+name: Deploy Docusaurus to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Trigger deployment on push to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set Up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20  # Use Node.js 20
+
+    - name: Install Dependencies
+      run: |
+        cd th-ws  # Navigate to the Docusaurus folder
+        yarn install  # Install dependencies
+
+    - name: Build Website
+      run: |
+        cd th-ws
+        yarn build
+
+    - name: Deploy to GitHub Pages
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use GitHub's default token
+      run: |
+        cd th-ws
+        yarn deploy
