@@ -30,6 +30,7 @@ jobs:
 
     - name: Deploy to GitHub Pages
       env:
+        GIT_USER: ${{ github.actor }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use GitHub's default token
       run: |
         cd th-ws
