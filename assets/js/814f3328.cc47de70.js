@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkth_ws=self.webpackChunkth_ws||[]).push([[7472],{5513:e=>{e.exports=JSON.parse('{"title":"Posts","items":[{"title":"My First Blog","permalink":"/tianhom/blog/2024/12/06/welcome","unlisted":false,"date":"2024-12-06T00:00:00.000Z"}]}')}}]);
