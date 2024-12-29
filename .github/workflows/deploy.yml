@@ -1,40 +1,38 @@
+name: Build and Deploy Docusaurus to GitHub Pages
+
 on:
   push:
     branches:
-      - main # Change this to your default branch if it's different
+      - main  # Trigger on push to 'main' branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3  # Fetch the repository code
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20  # Use Node.js version 20
 
-      - name: Install dependencies
-        run: |
-          cd th-ws
-          yarn install
+    - name: Install dependencies
+      run: |
+        cd th-ws
+        yarn install  # Install dependencies using yarn
 
-      - name: Build site
-        run: |
-          cd th-ws
-          yarn build
+    - name: Build the website
+      run: |
+        cd th-ws
+        yarn build  # Build the Docusaurus site
 
-      - name: Deploy to GitHub Pages
-        env:
-          USE_SSH: false
-          GIT_USER: ${{ github.actor }}
-          CURRENT_BRANCH: main
-          DEPLOYMENT_BRANCH: gh-pages
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cd th-ws
-          git config --global user.email ength091902@github.com
-          git config --global user.name "${{ github.actor }}"
-          yarn deploy
+    - name: Deploy to GitHub Pages
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Automatically use the GitHub token
+      run: |
+        cd th-ws
+        git config --global user.name tianhom0919
+        git config --global user.email ength091902@gmail.com
+        GIT_USER=tianhom0919 yarn deploy  # Deploy the built site
