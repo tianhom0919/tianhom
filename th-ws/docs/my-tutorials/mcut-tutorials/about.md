@@ -18,44 +18,26 @@ The Renesas RZ/G2L Evaluation Kit (EVK) will be used as the target embedded syst
 
 ---
 
-## Tutorial Outline
-
-### 1. Setup and Basics
-
-- Prepare the environment and learn basic Linux commands.
-- Build a Yocto Linux project using instructions from Renesas's BSP (Board Support Package) resources.
-- Run the resulting image on the RZ/G2L hardware.
-
-### 2. GStreamer Framework
-
-- Learn to use GStreamer for creating streaming media applications.
-- Integrate and test the MOIL Equirectangular GStreamer element within a Yocto project and execute it on the RZ/G2L.
-
-### 3. Qt Framework
-
-- Install Qt and set up cross-platform toolkits.
-- Compile and execute the Coffee Machine project on the RZ/G2L.
-- Explore Qt Quick Controls and QML for creating touch-screen user interfaces.
-
-
 ## Topics and Objectives
 
-### 1. Renesas RZ/G2L
+![outline](./img/1.png)
+
+### Week 1: Renesas RZ/G2L
 
 **Overview:** A general-purpose microprocessor featuring CPUs, a 3D graphics engine, and a video codec engine.
 **Objective:** Successfully build the Renesas BSP Yocto project on a PC and run the resulting image on the RZ/G2L.
 
-### 2. Yocto Project
+### Week 2: Yocto Project
 
 **Overview:** An open-source collaboration project for creating custom Linux-based systems, independent of hardware architecture.
 **Objective:** Build and deploy a Yocto project for the Renesas RZ/G2L.
 
-### 3. GStreamer
+### Week 3: GStreamer
 
 **Overview:** A versatile framework for streaming media applications. This tutorial focuses on integrating the MOIL Equirectangular GStreamer element into the Yocto project for testing on the RZ/G2L.
 **Objective:** Run the MOIL GStreamer element on the RZ/G2L.
 
-### 4. Qt Framework
+### Week 4: Qt Framework
 
 **Overview:** A cross-platform framework for creating applications, especially user interfaces. It supports Qt Quick and QML for touch-screen applications.
 **Objective:** Compile and execute the Coffee Machine example project on the RZ/G2L.
