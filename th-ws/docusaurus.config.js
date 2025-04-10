@@ -10,7 +10,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Eng Tian Hom's Site",
+  title: "Welcome!",
   tagline: 'There is no end to education.',
   favicon: 'img/favicon.ico',
 
@@ -99,7 +99,7 @@ const config = {
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
-        title: 'Eng Tian Hom',
+        title: "Tian Hom's Site",
         hideOnScroll: true,
         logo: {
           alt: 'My Site Logo',
