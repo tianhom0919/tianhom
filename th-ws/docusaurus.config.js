@@ -90,7 +90,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Add this colorMode section to enable dark mode by default
-    colorMode: {
+      colorMode: {
       defaultMode: 'dark', // Default mode set to dark
       disableSwitch: false, // Allow users to toggle between light and dark mode
       respectPrefersColorScheme: false, // Ignore the system's color scheme
