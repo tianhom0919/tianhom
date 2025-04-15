@@ -1,0 +1,3224 @@
+From 58c5d21974ca277c3559bf0c279a1eb81ca9fe53 Mon Sep 17 00:00:00 2001
+From: lvbin <lvbin@uctronics.com>
+Date: Fri, 5 Jul 2024 11:03:40 +0800
+Subject: [PATCH] add_ov5640
+
+---
+ .../boot/dts/renesas/rz-smarc-common.dtsi     |  20 +-
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  |   4 +-
+ arch/arm64/configs/defconfig                  |   1 +
+ include/fdp_drv.h                             | 232 +++++
+ include/isu_drv.h                             | 233 +++++
+ include/mmngr.symvers                         |   0
+ include/mmngr_buf_private.h                   | 133 +++
+ include/mmngr_buf_private_cmn.h               |  78 ++
+ include/mmngr_private.h                       | 342 +++++++
+ include/mmngr_private_cmn.h                   |  93 ++
+ include/mmngr_public.h                        |  66 ++
+ include/mmngr_public_cmn.h                    |  70 ++
+ include/mmngrbuf.symvers                      |   0
+ include/vsp_drv.h                             | 966 ++++++++++++++++++
+ include/vspm.symvers                          |   5 +
+ include/vspm_cmn.h                            | 169 +++
+ include/vspm_if.h                             | 518 ++++++++++
+ include/vspm_if.symvers                       |   0
+ include/vspm_public.h                         |  94 ++
+ 19 files changed, 3012 insertions(+), 12 deletions(-)
+ create mode 100644 include/fdp_drv.h
+ create mode 100644 include/isu_drv.h
+ create mode 100644 include/mmngr.symvers
+ create mode 100644 include/mmngr_buf_private.h
+ create mode 100644 include/mmngr_buf_private_cmn.h
+ create mode 100644 include/mmngr_private.h
+ create mode 100644 include/mmngr_private_cmn.h
+ create mode 100644 include/mmngr_public.h
+ create mode 100644 include/mmngr_public_cmn.h
+ create mode 100644 include/mmngrbuf.symvers
+ create mode 100644 include/vsp_drv.h
+ create mode 100644 include/vspm.symvers
+ create mode 100644 include/vspm_cmn.h
+ create mode 100644 include/vspm_if.h
+ create mode 100644 include/vspm_if.symvers
+ create mode 100644 include/vspm_public.h
+
+diff --git a/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi b/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
+index b6b5304b7..eed1b3af1 100644
+--- a/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
+@@ -89,7 +89,7 @@ clk_ext_camera: clk_ext_camera {
+ 		clock-frequency = <24000000>;
+ 	};
+ 
+-	ov5645_vdddo_1v8: 1p8v {
++	ov5640_vdddo_1v8: 1p8v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "camera_vdddo";
+ 		regulator-min-microvolt = <1800000>;
+@@ -97,7 +97,7 @@ ov5645_vdddo_1v8: 1p8v {
+ 		regulator-always-on;
+ 	};
+ 
+-	ov5645_vdda_2v8: 2p8v {
++	ov5640_vdda_2v8: 2p8v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "camera_vdda";
+ 		regulator-min-microvolt = <2800000>;
+@@ -105,7 +105,7 @@ ov5645_vdda_2v8: 2p8v {
+ 		regulator-always-on;
+ 	};
+ 
+-	ov5645_vddd_1v5: 1p5v {
++	ov5640_vddd_1v5: 1p5v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "camera_vddd";
+ 		regulator-min-microvolt = <1500000>;
+@@ -156,18 +156,18 @@ &i2c0 {
+ 
+ 	status = "okay";
+ 
+-	ov5645: camera@3c {
+-		compatible = "ovti,ov5645";
++	ov5640: camera@3c {
++		compatible = "ovti,ov5640";
+ 		reg = <0x3c>;
+ 		clock-names = "xclk";
+ 		clocks = <&clk_ext_camera>;
+ 		clock-frequency = <24000000>;
+-		vdddo-supply = <&ov5645_vdddo_1v8>;
+-		vdda-supply = <&ov5645_vdda_2v8>;
+-		vddd-supply = <&ov5645_vddd_1v5>;
++		vdddo-supply = <&ov5640_vdddo_1v8>;
++		vdda-supply = <&ov5640_vdda_2v8>;
++		vddd-supply = <&ov5640_vddd_1v5>;
+ 
+ 		port {
+-			ov5645_to_csi: endpoint {
++			ov5640_to_csi: endpoint {
+ 				clock-lanes = <0>;
+ 				data-lanes = <1 2>;
+ 				remote-endpoint = <&csi2_in>;
+@@ -310,7 +310,7 @@ port {
+ 			csi2_in: endpoint {
+ 				clock-lanes = <0>;
+ 				data-lanes = <1 2>;
+-				remote-endpoint = <&ov5645_to_csi>;
++				remote-endpoint = <&ov5640_to_csi>;
+ 			};
+ 		};
+ 	};
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+index 886e6d46e..001c1a166 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+@@ -114,8 +114,8 @@ &vccq_sdhi1 {
+ 	gpios = <&pinctrl RZG2L_GPIO(39, 1) GPIO_ACTIVE_HIGH>;
+ };
+ 
+-&ov5645 {
+-	enable-gpios = <&pinctrl RZG2L_GPIO(2, 0) GPIO_ACTIVE_HIGH>;
++&ov5640 {
++	powerdown-gpios = <&pinctrl RZG2L_GPIO(2, 0) GPIO_ACTIVE_LOW>;
+ 	reset-gpios = <&pinctrl RZG2L_GPIO(40, 2) GPIO_ACTIVE_LOW>;
+ };
+ 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 957563725..db094b86f 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -200,6 +200,7 @@ CONFIG_MEDIA_SDR_SUPPORT=y
+ CONFIG_MEDIA_CONTROLLER=y
+ CONFIG_MEDIA_PLATFORM_SUPPORT=y
+ CONFIG_VIDEO_OV5645=y
++CONFIG_VIDEO_OV5640=y
+ CONFIG_VIDEO_IMX219=y
+ CONFIG_VIDEO_V4L2_SUBDEV_API=y
+ CONFIG_V4L_PLATFORM_DRIVERS=y
+diff --git a/include/fdp_drv.h b/include/fdp_drv.h
+new file mode 100644
+index 000000000..36c8e5777
+--- /dev/null
++++ b/include/fdp_drv.h
+@@ -0,0 +1,232 @@
++/*************************************************************************/ /*
++ * VSPM
++ *
++ * Copyright (C) 2015-2017 Renesas Electronics Corporation
++ *
++ * License        Dual MIT/GPLv2
++ *
++ * The contents of this file are subject to the MIT license as set out below.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * Alternatively, the contents of this file may be used under the terms of
++ * the GNU General Public License Version 2 ("GPL") in which case the provisions
++ * of GPL are applicable instead of those above.
++ *
++ * If you wish to allow use of your version of this file only under the terms of
++ * GPL, and not to allow others to use your version of this file under the terms
++ * of the MIT license, indicate your decision by deleting the provisions above
++ * and replace them with the notice and other provisions required by GPL as set
++ * out in the file called "GPL-COPYING" included in this distribution. If you do
++ * not delete the provisions above, a recipient may use your version of this
++ * file under the terms of either the MIT license or GPL.
++ *
++ * This License is also included in this distribution in the file called
++ * "MIT-COPYING".
++ *
++ * EXCEPT AS OTHERWISE STATED IN A NEGOTIATED AGREEMENT: (A) THE SOFTWARE IS
++ * PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
++ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
++ * PARTICULAR PURPOSE AND NONINFRINGEMENT; AND (B) IN NO EVENT SHALL THE AUTHORS
++ * OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
++ * IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ *
++ *
++ * GPLv2:
++ * If you wish to use this file under the terms of GPL, following terms are
++ * effective.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */ /*************************************************************************/
++
++#ifndef __FDP_DRV_H__
++#define __FDP_DRV_H__
++
++#define E_FDP_PARA_REFBUF		(-253)
++#define E_FDP_PARA_STARTPAR		(-300)
++#define E_FDP_PARA_FDPGO		(-301)
++#define E_FDP_PARA_FPROCPAR		(-302)
++#define E_FDP_PARA_SEQPAR		(-303)
++#define E_FDP_PARA_INPIC		(-305)
++#define E_FDP_PARA_OUTBUF		(-306)
++#define E_FDP_PARA_SEQMODE		(-307)
++#define E_FDP_PARA_TELECINEMODE	(-308)
++#define E_FDP_PARA_INWIDTH		(-309)
++#define E_FDP_PARA_INHEIGHT		(-310)
++#define E_FDP_PARA_PICWIDTH		(-314)
++#define E_FDP_PARA_PICHEIGHT	(-315)
++#define E_FDP_PARA_CHROMA		(-316)
++#define E_FDP_PARA_PROGSEQ		(-317)
++#define E_FDP_PARA_PICSTRUCT	(-318)
++#define E_FDP_PARA_REPEATTOP	(-319)
++#define E_FDP_PARA_BUFREFRD0	(-321)
++#define E_FDP_PARA_BUFREFRD1	(-322)
++#define E_FDP_PARA_BUFREFRD2	(-323)
++#define E_FDP_PARA_LASTSTART	(-329)
++#define E_FDP_PARA_CF			(-330)
++#define E_FDP_PARA_INTERPOLATED	(-331)
++#define E_FDP_PARA_OUTFORMAT	(-332)
++#define E_FDP_PARA_SRC_ADDR		(-350)
++#define E_FDP_PARA_SRC_ADDR_C0	(-351)
++#define E_FDP_PARA_SRC_ADDR_C1	(-352)
++#define E_FDP_PARA_SRC_STRIDE	(-353)
++#define E_FDP_PARA_SRC_STRIDE_C	(-354)
++#define E_FDP_PARA_DST_ADDR		(-355)
++#define E_FDP_PARA_DST_ADDR_C0	(-356)
++#define E_FDP_PARA_DST_ADDR_C1	(-357)
++#define E_FDP_PARA_DST_STRIDE	(-358)
++#define E_FDP_PARA_DST_STRIDE_C	(-359)
++#define E_FDP_PARA_STLMSK_ADDR	(-360)
++#define E_FDP_PARA_FCNL			(-400)
++#define E_FDP_PARA_TLEN			(-401)
++#define E_FDP_PARA_FCP_POS		(-402)
++#define E_FDP_PARA_FCP_STRIDE	(-403)
++#define E_FDP_PARA_BA_ANC		(-404)
++#define E_FDP_PARA_BA_REF		(-405)
++
++/* FDP processing status */
++enum {
++	FDP_STAT_NO_INIT = 0,
++	FDP_STAT_INIT,
++	FDP_STAT_READY,
++	FDP_STAT_RUN,
++};
++
++/* FDP processing opration parameter */
++enum {
++	FDP_NOGO = 0,
++	FDP_GO,
++};
++
++/* Current field parameter */
++enum {
++	FDP_CF_TOP = 0,
++	FDP_CF_BOTTOM,
++};
++
++/* De-interlacing mode parameter */
++enum {
++	FDP_DIM_PREV = 3,	/* Select previous field */
++	FDP_DIM_NEXT,		/* Select next field */
++};
++
++/* Input/Output format */
++enum {
++	FDP_YUV420 = 0,
++	FDP_YUV420_PLANAR,
++	FDP_YUV420_NV21,
++	FDP_YUV422_NV16,
++	FDP_YUV422_YUY2,
++	FDP_YUV422_UYVY,
++	FDP_YUV422_PLANAR,
++	FDP_YUV444_PLANAR,
++};
++
++#define FDP_YUV420_YV12			FDP_YUV420_PLANAR
++#define FDP_YUV420_YU12			FDP_YUV420_PLANAR
++#define FDP_YUV422_YV16			FDP_YUV422_PLANAR
++
++/* Sequence mode parameter */
++enum {
++	FDP_SEQ_PROG = 0,		/* Progressive */
++	FDP_SEQ_INTER,			/* Interlace Adaptive 3D/2D */
++	FDP_SEQ_INTERH,			/* not used */
++	FDP_SEQ_INTER_2D,		/* Interlace Fixed 2D */
++	FDP_SEQ_INTERH_2D,		/* not used */
++};
++
++/* Telecine mode parameter */
++enum {
++	FDP_TC_OFF = 0,				/* Disable */
++	FDP_TC_ON,					/* not used */
++	FDP_TC_FORCED_PULL_DOWN,	/* Force 2-3 pull down mode */
++	FDP_TC_INTERPOLATED_LINE,	/* Interpolated line mode */
++};
++
++/* Sequence information parameter */
++struct fdp_seq_t {
++	unsigned char seq_mode;
++	unsigned char telecine_mode;
++	unsigned short in_width;
++	unsigned short in_height;
++};
++
++/* Picture information structure */
++struct fdp_pic_t {
++	unsigned long picid;
++	unsigned char chroma_format;	/* input format */
++	unsigned short width;			/* picture horizontal size */
++	unsigned short height;			/* picture vertical size */
++	unsigned char progressive_sequence;
++	unsigned char progressive_frame;
++	unsigned char picture_structure;
++	unsigned char repeat_first_field;
++	unsigned char top_field_first;
++};
++
++/* Picture image buffer information structure */
++struct fdp_imgbuf_t {
++	unsigned int addr;
++	unsigned int addr_c0;
++	unsigned int addr_c1;
++	unsigned short stride;
++	unsigned short stride_c;
++};
++
++/* Reference buffer information structure */
++struct fdp_refbuf_t {
++	struct fdp_imgbuf_t *next_buf;
++	struct fdp_imgbuf_t *cur_buf;
++	struct fdp_imgbuf_t *prev_buf;
++};
++
++/* De-interlace information structure */
++struct fdp_ipc_t {
++	unsigned char cmb_ofst;
++	unsigned char cmb_max;
++	unsigned char cmb_gard;
++};
++
++/* Processing information structure */
++struct fdp_fproc_t {
++	struct fdp_seq_t *seq_par;
++	struct fdp_pic_t *in_pic;
++	unsigned char last_seq_indicator;
++	unsigned char current_field;
++	unsigned char interpolated_line;
++	unsigned char out_format;
++	struct fdp_imgbuf_t *out_buf;
++	struct fdp_refbuf_t *ref_buf;
++	struct fcp_info_t *fcp_par;
++	struct fdp_ipc_t *ipc_par;
++};
++
++/* Start information parameter */
++struct fdp_start_t {
++	unsigned char fdpgo;
++	struct fdp_fproc_t *fproc_par;
++};
++
++/* Status information parameter */
++struct fdp_status_t {
++	unsigned long picid;
++	unsigned int vcycle;
++	unsigned int sensor[18];
++};
++#endif
+diff --git a/include/isu_drv.h b/include/isu_drv.h
+new file mode 100644
+index 000000000..9a13d1c98
+--- /dev/null
++++ b/include/isu_drv.h
+@@ -0,0 +1,233 @@
++/*************************************************************************/ /*
++ * ISUM
++ *
++ * Copyright (C) 2015-2021 Renesas Electronics Corporation
++ *
++ * License        Dual MIT/GPLv2
++ *
++ * The contents of this file are subject to the MIT license as set out below.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * Alternatively, the contents of this file may be used under the terms of
++ * the GNU General Public License Version 2 ("GPL") in which case the provisions
++ * of GPL are applicable instead of those above.
++ *
++ * If you wish to allow use of your version of this file only under the terms of
++ * GPL, and not to allow others to use your version of this file under the terms
++ * of the MIT license, indicate your decision by deleting the provisions above
++ * and replace them with the notice and other provisions required by GPL as set
++ * out in the file called "GPL-COPYING" included in this distribution. If you do
++ * not delete the provisions above, a recipient may use your version of this
++ * file under the terms of either the MIT license or GPL.
++ *
++ * This License is also included in this distribution in the file called
++ * "MIT-COPYING".
++ *
++ * EXCEPT AS OTHERWISE STATED IN A NEGOTIATED AGREEMENT: (A) THE SOFTWARE IS
++ * PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
++ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
++ * PARTICULAR PURPOSE AND NONINFRINGEMENT; AND (B) IN NO EVENT SHALL THE AUTHORS
++ * OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
++ * IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ *
++ *
++ * GPLv2:
++ * If you wish to use this file under the terms of GPL, following terms are
++ * effective.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */ /*************************************************************************/
++
++#ifndef _ISU_DRV_H_
++#define _ISU_DRV_H_
++
++/* error code */
++#define E_ISU_DEF_INH			(-100)
++#define E_ISU_DEF_REG			(-101)
++#define E_ISU_NO_MEM			(-102)
++#define E_ISU_NO_INIT			(-103)
++#define E_ISU_INVALID_STATE		(-104)
++#define E_ISU_NO_CLK			(-105)
++#define E_ISU_PARA_CH			(-106)
++
++#define E_ISU_PARA_CB			(-201)
++#define E_ISU_PARA_INPAR		(-202)
++
++#define E_ISU_PARA_NOOUT		(-210)
++#define E_ISU_PARA_NOIN			(-211)
++#define E_ISU_PARA_IN_ADDR		(-412)
++#define E_ISU_PARA_IN_STRD		(-413)
++#define E_ISU_PARA_IN_WIDTH		(-414)
++#define E_ISU_PARA_IN_HEIGHT		(-415)
++#define E_ISU_PARA_IN_FORMAT		(-416)
++#define E_ISU_PARA_ALPHA_ASEL		(-419)
++
++#define E_ISU_PARA_OUT_ADDR		(-470)
++#define E_ISU_PARA_OUT_STRD		(-471)
++#define E_ISU_PARA_OUT_CSC		(-472)
++#define E_ISU_PARA_OUT_FORMAT		(-475)
++
++#define E_ISU_PARA_RS_CROP_WIDTH	(-550)
++#define E_ISU_PARA_RS_CROP_HEIGHT	(-551)
++#define E_ISU_PARA_RS_RATIO		(-552)	/* illegal ratio */
++#define E_ISU_PARA_RS_START		(-553)	/* illegal resize start pos */
++#define E_ISU_PARA_RS_PAD		(-554)  /* illegal pad selection */
++#define E_ISU_PARA_RS_TUNE		(-555)  /* illegal tune */
++
++#define E_ISU_PARA_DL_ADDR		(-680)
++#define E_ISU_DL_FORMAT			(-682)
++
++#define ISU_RS_USE			(0x01) /* Resizer */
++
++/* lower-bit alpha value extension/compress method set */
++#define ISU_AEXT_COPY			(0x00)	/* copied  */
++#define ISU_AEXT_EXPAN			(0x01)	/* extended */
++#define ISU_AEXT_COMP			(0x02)	/* compressed */
++#define ISU_AEXT_CONV			(0x03)  /* converted */
++
++/* RPF module parameter */
++/* ISU image format */
++#define ISU_ARGB1555			(0x00)
++#define ISU_RGB565			(0x01)
++#define ISU_BGR666			(0x02)
++#define ISU_RGB888			(0x03)
++#define ISU_BGR888			(0x04)
++#define ISU_ARGB8888			(0x05)
++#define ISU_RGBA8888			(0x06)
++#define ISU_ABGR8888			(0x07)
++#define ISU_YUV422_UYVY			(0x20)
++#define ISU_YUV422_YUY2			(0x21)
++#define ISU_YUV422_NV16			(0x22)
++#define ISU_YUV420_NV12			(0x23)
++#define ISU_RAW8			(0x30)
++#define ISU_RAW10			(0x31)
++#define ISU_RAW12			(0x32)
++
++/* swap setting */
++#define ISU_SWAP_NO			(0x00)	/* disable */
++#define ISU_SWAP_B			(0x01)	/* byte units */
++#define ISU_SWAP_W			(0x02)	/* word units */
++#define ISU_SWAP_L			(0x04)	/* longword units */
++#define ISU_SWAP_LL			(0x08)	/* LONG LWORD units */
++
++/* maximum number steps tunning */
++#define ISU_TUNE_MAX			(4096)
++
++/* clip index */
++#define CLIP_MIN_INX			0
++#define CLIP_MAX_INX			1
++
++/* color space conversion */
++#define ISU_CSC_CUSTOM			(0x00)	/* enable with user custom */
++#define ISU_CSC_RAW			(0x01) 	/* enable with 709 standard */
++#define ISU_LAYER_NUM			(3)
++#define ISU_OFFSET_NUM			(2)
++#define ISU_CLIP_NUM	                (2)
++
++/* UV conv */
++#define ISU_UV_CONV_OFF                 (0x00)
++#define ISU_UV_CONV_ON                  (0x01)
++/* select of color space conversion scale */
++#define ISU_ITU_COLOR			(0x00)	/* YUV[16,235/140] <-> RGB[0,255] */
++#define ISU_FULL_COLOR			(0x01)	/* Full scale */
++
++/* alpha bit counte conversion selection */
++#define ISU_ALPHA_8BIT			(0x00) /* 8bit alpha is converted to 1bit */
++#define ISU_ALPHA_1BIT			(0x01) /* alpha value goes through */
++
++/* PAD data select */
++#define ISU_PAD_P			(0x00)
++#define ISU_PAD_IN			(0x01)
++
++/* color data clipping method */
++#define ISU_CLMD_NO			(0x00)	/* not clipped */
++#define ISU_CLMD_MODE1			(0x01)	/* YCbCr mode1 */
++#define ISU_CLMD_MODE2			(0x02)	/* YCbCr mode2 */
++
++struct isu_alpha_unit_t {
++    unsigned char	asel;
++    unsigned char	anum0;
++    unsigned char	anum1;
++    unsigned char	anum2;
++    unsigned char	athres0;
++    unsigned char	athres1;
++};
++
++struct isu_td_unit_t {
++    unsigned char	grada_mode;
++    unsigned char	grada_step;
++    unsigned int 	init_val;
++};
++
++struct isu_csc_t {
++    unsigned char	csc;
++    unsigned short	k_matrix[3][3];
++    unsigned short	offset[3][2];
++    unsigned short	clip[3][2];
++};
++
++struct isu_src_t {
++    unsigned long	addr;
++    unsigned long	addr_c;
++    unsigned short	stride;
++    unsigned short	stride_c;
++    unsigned short	width;
++    unsigned short	height;
++    unsigned char	format ;
++    unsigned char	swap;
++    struct isu_td_unit_t	*td ;
++    struct isu_alpha_unit_t *alpha ;
++    unsigned char	uv_conv;
++};
++
++struct isu_dst_t {
++    unsigned long	addr;
++    unsigned long	addr_c;
++    unsigned short	stride;
++    unsigned short	stride_c;
++    unsigned char	format ;
++    unsigned char	swap;
++    struct isu_csc_t	*csc;
++    struct isu_alpha_unit_t *alpha ;
++};
++
++
++/* RS parameter */
++struct isu_rs_t {
++    unsigned short	start_x;
++    unsigned short	start_y;
++    unsigned short	tune_x;
++    unsigned short	tune_y;
++    unsigned short	crop_w;
++    unsigned short	crop_h;
++    unsigned char       pad_mode;
++    unsigned int	pad_val;
++    unsigned int	x_ratio ;
++    unsigned int	y_ratio ;
++};
++
++
++struct isu_start_t {
++    struct isu_src_t *src_par;	    /* source parameter */
++    struct isu_dst_t *dst_par;		/* destination parameter */
++    struct isu_rs_t  *rs_par ;       /* Resizer parameter */
++    unsigned long     dl_hard_addr;			/* work memory for DL */
++};
++#endif
+diff --git a/include/mmngr.symvers b/include/mmngr.symvers
+new file mode 100644
+index 000000000..e69de29bb
+diff --git a/include/mmngr_buf_private.h b/include/mmngr_buf_private.h
+new file mode 100644
+index 000000000..a50a19615
+--- /dev/null
++++ b/include/mmngr_buf_private.h
+@@ -0,0 +1,133 @@
++/*************************************************************************/ /*
++ MMNGR
++
++ Copyright (C) 2015-2016 Renesas Electronics Corporation
++
++ License        Dual MIT/GPLv2
++
++ The contents of this file are subject to the MIT license as set out below.
++
++ Permission is hereby granted, free of charge, to any person obtaining a copy
++ of this software and associated documentation files (the "Software"), to deal
++ in the Software without restriction, including without limitation the rights
++ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ copies of the Software, and to permit persons to whom the Software is
++ furnished to do so, subject to the following conditions:
++
++ The above copyright notice and this permission notice shall be included in
++ all copies or substantial portions of the Software.
++
++ Alternatively, the contents of this file may be used under the terms of
++ the GNU General Public License Version 2 ("GPL") in which case the provisions
++ of GPL are applicable instead of those above.
++
++ If you wish to allow use of your version of this file only under the terms of
++ GPL, and not to allow others to use your version of this file under the terms
++ of the MIT license, indicate your decision by deleting the provisions above
++ and replace them with the notice and other provisions required by GPL as set
++ out in the file called "GPL-COPYING" included in this distribution. If you do
++ not delete the provisions above, a recipient may use your version of this file
++ under the terms of either the MIT license or GPL.
++
++ This License is also included in this distribution in the file called
++ "MIT-COPYING".
++
++ EXCEPT AS OTHERWISE STATED IN A NEGOTIATED AGREEMENT: (A) THE SOFTWARE IS
++ PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
++ BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
++ PURPOSE AND NONINFRINGEMENT; AND (B) IN NO EVENT SHALL THE AUTHORS OR
++ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
++ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++
++
++ GPLv2:
++ If you wish to use this file under the terms of GPL, following terms are
++ effective.
++
++ This program is free software; you can redistribute it and/or modify
++ it under the terms of the GNU General Public License as published by
++ the Free Software Foundation; version 2 of the License.
++
++ This program is distributed in the hope that it will be useful,
++ but WITHOUT ANY WARRANTY; without even the implied warranty of
++ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ GNU General Public License for more details.
++
++ You should have received a copy of the GNU General Public License
++ along with this program; if not, write to the Free Software
++ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++*/ /*************************************************************************/
++#ifndef __MMNGR_BUF_PRIVATE_H__
++#define __MMNGR_BUF_PRIVATE_H__
++
++#include "mmngr_buf_private_cmn.h"
++
++struct MM_BUF_DRVDATA {
++	struct device *mm_buf_dev;
++};
++
++struct MM_BUF_PRIVATE {
++	size_t		size;
++	unsigned int	hard_addr;
++	int		buf;
++	struct dma_buf	*dma_buf;
++	struct dma_buf_attachment *attach;
++	struct sg_table *sgt;
++};
++
++#define DEVNAME		"rgnmmbuf"
++#define DRVNAME		DEVNAME
++#define CLSNAME		DEVNAME
++#define DEVNUM		1
++
++#ifdef CONFIG_COMPAT
++struct COMPAT_MM_BUF_PARAM {
++	compat_size_t	size;
++	compat_uint_t	hard_addr;
++	compat_int_t	buf;
++};
++
++#define COMPAT_MM_IOC_EXPORT_START \
++		_IOWR(MM_IOC_MAGIC, 0, struct COMPAT_MM_BUF_PARAM)
++#define COMPAT_MM_IOC_EXPORT_END \
++		_IOWR(MM_IOC_MAGIC, 1, struct COMPAT_MM_BUF_PARAM)
++#define COMPAT_MM_IOC_IMPORT_START \
++		_IOWR(MM_IOC_MAGIC, 2, struct COMPAT_MM_BUF_PARAM)
++#define COMPAT_MM_IOC_IMPORT_END \
++		_IOWR(MM_IOC_MAGIC, 3, struct COMPAT_MM_BUF_PARAM)
++
++static long compat_ioctl(struct file *file, unsigned int cmd,
++			unsigned long arg);
++#endif
++
++static int open(struct inode *inode, struct file *file);
++static int close(struct inode *inode, struct file *file);
++static long ioctl(struct file *file, unsigned int cmd, unsigned long arg);
++static int dmabuf_attach(struct dma_buf *buf,
++			 struct dma_buf_attachment *attach);
++static void dmabuf_detach(struct dma_buf *buf,
++			struct dma_buf_attachment *attach);
++static struct sg_table *dmabuf_map_dma_buf(struct dma_buf_attachment *attach,
++					enum dma_data_direction dir);
++static void dmabuf_unmap_dma_buf(struct dma_buf_attachment *attach,
++				struct sg_table *sgt,
++				enum dma_data_direction dir);
++static void dmabuf_release(struct dma_buf *buf);
++static int dmabuf_begin_cpu_access(struct dma_buf *buf,
++				enum dma_data_direction direction);
++static int dmabuf_end_cpu_access(struct dma_buf *buf,
++				enum dma_data_direction direction);
++static int dmabuf_mmap(struct dma_buf *buf, struct vm_area_struct *vma);
++static void *dmabuf_vmap(struct dma_buf *buf);
++static void dmabuf_vunmap(struct dma_buf *buf, void *vaddr);
++static int mm_probe(struct platform_device *pdev);
++static int mm_remove(struct platform_device *pdev);
++static int mm_init(void);
++static void mm_exit(void);
++static int mm_ioc_export_start(int __user *arg, struct MM_BUF_PRIVATE *priv);
++static int mm_ioc_export_end(int __user *arg, struct MM_BUF_PRIVATE *priv);
++static int mm_ioc_import_start(int __user *arg, struct MM_BUF_PRIVATE *priv);
++static int mm_ioc_import_end(struct MM_BUF_PRIVATE *priv);
++
++#endif	/* __MMNGR_BUF_PRIVATE_H__ */
+diff --git a/include/mmngr_buf_private_cmn.h b/include/mmngr_buf_private_cmn.h
+new file mode 100644
+index 000000000..c16213de9
+--- /dev/null
++++ b/include/mmngr_buf_private_cmn.h
+@@ -0,0 +1,78 @@
++/*************************************************************************/ /*
++ MMNGR
++
++ Copyright (C) 2016 Renesas Electronics Corporation
++
++ License        Dual MIT/GPLv2
++
++ The contents of this file are subject to the MIT license as set out below.
++
++ Permission is hereby granted, free of charge, to any person obtaining a copy
++ of this software and associated documentation files (the "Software"), to deal
++ in the Software without restriction, including without limitation the rights
++ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ copies of the Software, and to permit persons to whom the Software is
++ furnished to do so, subject to the following conditions:
++
++ The above copyright notice and this permission notice shall be included in
++ all copies or substantial portions of the Software.
++
++ Alternatively, the contents of this file may be used under the terms of
++ the GNU General Public License Version 2 ("GPL") in which case the provisions
++ of GPL are applicable instead of those above.
++
++ If you wish to allow use of your version of this file only under the terms of
++ GPL, and not to allow others to use your version of this file under the terms
++ of the MIT license, indicate your decision by deleting the provisions above
++ and replace them with the notice and other provisions required by GPL as set
++ out in the file called "GPL-COPYING" included in this distribution. If you do
++ not delete the provisions above, a recipient may use your version of this file
++ under the terms of either the MIT license or GPL.
++
++ This License is also included in this distribution in the file called
++ "MIT-COPYING".
++
++ EXCEPT AS OTHERWISE STATED IN A NEGOTIATED AGREEMENT: (A) THE SOFTWARE IS
++ PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
++ BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
++ PURPOSE AND NONINFRINGEMENT; AND (B) IN NO EVENT SHALL THE AUTHORS OR
++ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
++ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++
++
++ GPLv2:
++ If you wish to use this file under the terms of GPL, following terms are
++ effective.
++
++ This program is free software; you can redistribute it and/or modify
++ it under the terms of the GNU General Public License as published by
++ the Free Software Foundation; version 2 of the License.
++
++ This program is distributed in the hope that it will be useful,
++ but WITHOUT ANY WARRANTY; without even the implied warranty of
++ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ GNU General Public License for more details.
++
++ You should have received a copy of the GNU General Public License
++ along with this program; if not, write to the Free Software
++ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++*/ /*************************************************************************/
++#ifndef __MMNGR_BUF_PRIVATE_CMN_H__
++#define __MMNGR_BUF_PRIVATE_CMN_H__
++
++#define DEVFILE "/dev/rgnmmbuf"
++
++struct MM_BUF_PARAM {
++	size_t		size;
++	unsigned int	hard_addr;
++	int		buf;
++};
++
++#define MM_IOC_MAGIC 'd'
++#define MM_IOC_EXPORT_START	_IOWR(MM_IOC_MAGIC, 0, struct MM_BUF_PARAM)
++#define MM_IOC_EXPORT_END	_IOWR(MM_IOC_MAGIC, 1, struct MM_BUF_PARAM)
++#define MM_IOC_IMPORT_START	_IOWR(MM_IOC_MAGIC, 2, struct MM_BUF_PARAM)
++#define MM_IOC_IMPORT_END	_IOWR(MM_IOC_MAGIC, 3, struct MM_BUF_PARAM)
++
++#endif	/* __MMNGR_BUF_PRIVATE_CMN_H__ */
+diff --git a/include/mmngr_private.h b/include/mmngr_private.h
+new file mode 100644
+index 000000000..d59d8b487
+--- /dev/null
++++ b/include/mmngr_private.h
+@@ -0,0 +1,342 @@
++/*************************************************************************/ /*
++ MMNGR
++
++ Copyright (C) 2015-2019 Renesas Electronics Corporation
++
++ License        Dual MIT/GPLv2
++
++ The contents of this file are subject to the MIT license as set out below.
++
++ Permission is hereby granted, free of charge, to any person obtaining a copy
++ of this software and associated documentation files (the "Software"), to deal
++ in the Software without restriction, including without limitation the rights
++ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ copies of the Software, and to permit persons to whom the Software is
++ furnished to do so, subject to the following conditions:
++
++ The above copyright notice and this permission notice shall be included in
++ all copies or substantial portions of the Software.
++
++ Alternatively, the contents of this file may be used under the terms of
++ the GNU General Public License Version 2 ("GPL") in which case the provisions
++ of GPL are applicable instead of those above.
++
++ If you wish to allow use of your version of this file only under the terms of
++ GPL, and not to allow others to use your version of this file under the terms
++ of the MIT license, indicate your decision by deleting the provisions above
++ and replace them with the notice and other provisions required by GPL as set
++ out in the file called "GPL-COPYING" included in this distribution. If you do
++ not delete the provisions above, a recipient may use your version of this file
++ under the terms of either the MIT license or GPL.
++
++ This License is also included in this distribution in the file called
++ "MIT-COPYING".
++
++ EXCEPT AS OTHERWISE STATED IN A NEGOTIATED AGREEMENT: (A) THE SOFTWARE IS
++ PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
++ BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
++ PURPOSE AND NONINFRINGEMENT; AND (B) IN NO EVENT SHALL THE AUTHORS OR
++ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
++ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++
++
++ GPLv2:
++ If you wish to use this file under the terms of GPL, following terms are
++ effective.
++
++ This program is free software; you can redistribute it and/or modify
++ it under the terms of the GNU General Public License as published by
++ the Free Software Foundation; version 2 of the License.
++
++ This program is distributed in the hope that it will be useful,
++ but WITHOUT ANY WARRANTY; without even the implied warranty of
++ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ GNU General Public License for more details.
++
++ You should have received a copy of the GNU General Public License
++ along with this program; if not, write to the Free Software
++ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++*/ /*************************************************************************/
++#ifndef __MMNGR_PRIVATE_H__
++#define __MMNGR_PRIVATE_H__
++
++#include "mmngr_private_cmn.h"
++
++/* IPMMU (MMU) */
++#if defined(IPMMU_MMU_SUPPORT_1GB_PGTABLE)
++#define IPMMU_MMU_SUPPORT
++#endif
++
++struct MM_DRVDATA {
++	struct device *mm_dev;
++	struct device *mm_dev_reserve;
++	unsigned long	reserve_size;
++	phys_addr_t	reserve_phy_addr;
++	unsigned long	reserve_kernel_virt_addr;
++};
++
++struct BM {
++	phys_addr_t	top_phy_addr;
++	unsigned long	order;
++	unsigned long	end_bit;
++	unsigned long	*bits;
++};
++
++struct LOSSY_INFO {
++	u32 magic;
++	u32 a0;
++	u32 b0;
++};
++
++struct LOSSY_DATA {
++	u32 fmt;
++	struct BM *bm_lossy;
++};
++
++#ifdef IPMMU_MMU_SUPPORT
++enum {
++	DO_IOREMAP,
++	DO_IOUNMAP,
++	ENABLE_UTLB,
++	DISABLE_UTLB,
++	ENABLE_MMU_MM,
++	DISABLE_MMU_MM,
++	ENABLE_MMU,
++	DISABLE_MMU_TLB,
++	DISABLE_MMU,
++	SET_TRANSLATION_TABLE,
++	CLEAR_MMU_STATUS_REGS,
++	PRINT_MMU_DEBUG,
++	START_MMU_PERF_MON,
++	STOP_MMU_PERF_MON,
++	PRINT_MMU_PERF_MON,
++	BACKUP_MMU_REGS,
++	RESTORE_MMU_REGS,
++	INVALIDATE_TLB,
++};
++
++struct hw_register {
++	const char *reg_name;
++	unsigned int reg_offset;
++	unsigned int reg_val;
++};
++
++struct ip_master {
++	const char *ip_name;
++	unsigned int utlb_no;
++};
++
++struct rcar_ipmmu {
++	const char *ipmmu_name;
++	unsigned int base_addr;
++	void __iomem *virt_addr;
++	unsigned int reg_count;
++	unsigned int masters_count;
++	struct hw_register *ipmmu_reg;
++	struct ip_master *ip_masters;
++};
++
++struct rcar_ipmmu_data {
++	struct rcar_ipmmu **ipmmu_data;
++};
++#endif /* IPMMU_MMU_SUPPORT */
++
++#ifdef CONFIG_COMPAT
++struct COMPAT_MM_PARAM {
++	compat_size_t	size;
++	compat_u64	phy_addr;
++	compat_uint_t	hard_addr;
++	compat_ulong_t	user_virt_addr;
++	compat_ulong_t	kernel_virt_addr;
++	compat_uint_t	flag;
++};
++
++#define COMPAT_MM_IOC_ALLOC	_IOWR(MM_IOC_MAGIC, 0, struct COMPAT_MM_PARAM)
++#define COMPAT_MM_IOC_FREE	_IOWR(MM_IOC_MAGIC, 1, struct COMPAT_MM_PARAM)
++#define COMPAT_MM_IOC_SET	_IOWR(MM_IOC_MAGIC, 2, struct COMPAT_MM_PARAM)
++#define COMPAT_MM_IOC_GET	_IOWR(MM_IOC_MAGIC, 3, struct COMPAT_MM_PARAM)
++#define COMPAT_MM_IOC_ALLOC_CO	_IOWR(MM_IOC_MAGIC, 4, struct COMPAT_MM_PARAM)
++#define COMPAT_MM_IOC_FREE_CO	_IOWR(MM_IOC_MAGIC, 5, struct COMPAT_MM_PARAM)
++#define COMPAT_MM_IOC_SHARE	_IOWR(MM_IOC_MAGIC, 6, struct COMPAT_MM_PARAM)
++
++static long compat_ioctl(struct file *file, unsigned int cmd,
++			unsigned long arg);
++#endif
++
++#define DEVNAME		"rgnmm"
++#define DRVNAME		DEVNAME
++#define CLSNAME		DEVNAME
++#define DEVNUM		1
++
++static int mm_ioc_alloc(struct device *mm_dev,
++			int __user *in,
++			struct MM_PARAM *out);
++static void mm_ioc_free(struct device *mm_dev, struct MM_PARAM *p);
++static int mm_ioc_set(int __user *in, struct MM_PARAM *out);
++static int mm_ioc_get(struct MM_PARAM *in, int __user *out);
++static int alloc_bm(struct BM *pb,
++		phys_addr_t top_phy_addr,
++		unsigned long size,
++		unsigned long order);
++static void free_bm(struct BM *pb);
++static int mm_ioc_alloc_co(struct BM *pb, int __user *in, struct MM_PARAM *out);
++static int mm_ioc_alloc_co_select(int __user *in, struct MM_PARAM *out);
++static void mm_ioc_free_co(struct BM *pb, struct MM_PARAM *p);
++static void mm_ioc_free_co_select(struct MM_PARAM *p);
++static int mm_ioc_share(int __user *in, struct MM_PARAM *out);
++static void mmngr_dev_set_cma_area(struct device *dev, struct cma *cma);
++static int init_lossy_info(void);
++static int find_lossy_entry(unsigned int flag, int *entry);
++static int _parse_reserved_mem_dt(struct device_node *np,
++				  const char *phandle_name,
++				  const char *match,
++				  u64 *addr, u64 *size);
++static int parse_reserved_mem_dt(struct device_node *np);
++static int open(struct inode *inode, struct file *file);
++static int close(struct inode *inode, struct file *file);
++static long ioctl(struct file *file, unsigned int cmd, unsigned long arg);
++static int mmap(struct file *filp, struct vm_area_struct *vma);
++static int mm_probe(struct platform_device *pdev);
++static int mm_remove(struct platform_device *pdev);
++static int mm_init(void);
++static void mm_exit(void);
++
++static int validate_memory_map(void);
++
++#ifdef MMNGR_SALVATORX
++#define MM_OMXBUF_SIZE		(128 * 1024 * 1024)
++#endif /* MMNGR_SALVATORX */
++
++#ifdef MMNGR_EBISU
++#define MM_OMXBUF_SIZE		(64 * 1024 * 1024)
++#endif /* MMNGR_EBISU */
++
++#ifdef MMNGR_V3MSK
++#define MM_OMXBUF_ADDR		(0x7F000000UL)
++#define MM_OMXBUF_SIZE		(16 * 1024 * 1024)
++#endif /* MMNGR_V3MSK */
++
++#define	MM_CO_ORDER		(12)
++
++#ifdef MMNGR_SSP_ENABLE
++#ifdef MMNGR_SALVATORX
++#define MM_SSPBUF_ADDR		(0x53000000UL)
++#define MM_SSPBUF_SIZE		(16 * 1024 * 1024)
++#endif
++
++#ifdef MMNGR_EBISU
++#error "R8A77990 (R-Car E3) EBISU does not support SSPBUF"
++#endif
++#endif /* MMNGR_SSP_ENABLE */
++
++#define MAX_LOSSY_ENTRIES		(16)
++#define MM_LOSSY_INFO_MAGIC		(0x12345678UL)
++#define MM_LOSSY_ADDR_MASK		(0x0003FFFFUL)  /* [17:0] */
++#define MM_LOSSY_FMT_MASK		(0x60000000UL)  /* [30:29] */
++#define MM_LOSSY_ENABLE_MASK		(0x80000000UL)  /* [31] */
++#define MM_LOSSY_SHARED_MEM_ADDR	(0x47FD7000UL)
++#define MM_LOSSY_SHARED_MEM_SIZE	(MAX_LOSSY_ENTRIES \
++					* sizeof(struct LOSSY_INFO))
++
++#ifdef IPMMU_MMU_SUPPORT
++
++#define IPMMUVP_BASE		(0xFE990000UL)
++#define IPMMUVI_BASE		(0xFEBD0000UL)
++#define IPMMUVC0_BASE		(0xFE6B0000UL)
++#define IPMMUVC1_BASE		(0xFE6F0000UL)
++#define IPMMUMM_BASE		(0xE67B0000UL)
++/* Available in H3 2.0 */
++#define IPMMUVP0_BASE		IPMMUVP_BASE
++#define IPMMUVP1_BASE		(0xFE980000UL)
++
++#ifdef MMNGR_SSP_ENABLE
++#define IPMMUSY_BASE		(0xE7730000UL)
++#define IPMMUDS1_BASE		(0xE7740000UL)
++#endif
++
++#define EAE			BIT(31)
++#define SL_BIT7			BIT(7)
++#define TSZ0_32BIT		0 /* 2^(32-0) */
++#define MMUEN			BIT(0)
++#define FLUSH			BIT(1)
++#define IMTTLBR_MASK		GENMASK(31, 12)
++
++#define CUR_TTSEL		7	/* Pagetable no.7 */
++
++#define TTSEL(n)		(0x40 * (n))
++#define IMCTRn_OFFSET(n)	(0x0000 + TTSEL(n))
++#define IMTTBCRn_OFFSET(n)	(0x0008 + TTSEL(n))
++#define IMTTUBR0n_OFFSET(n)	(0x0014 + TTSEL(n))
++#define IMTTLBR0n_OFFSET(n)	(0x0010 + TTSEL(n))
++#define IMTTUBR1n_OFFSET(n)	(0x001c + TTSEL(n))
++#define IMTTLBR1n_OFFSET(n)	(0x0018 + TTSEL(n))
++#define IMSTRn_OFFSET(n)	(0x0020 + TTSEL(n))
++#define IMMAIR0n_OFFSET(n)	(0x0028 + TTSEL(n))
++#define IMMAIR1n_OFFSET(n)	(0x002c + TTSEL(n))
++#define IMELARn_OFFSET(n)	(0x0030 + TTSEL(n))
++#define IMEUARn_OFFSET(n)	(0x0034 + TTSEL(n))
++#define IMUCTR0(n)		(0x300 + ((n) * 16))
++#define IMUCTR32(n)		(0x600 + (((n) - 32) * 16))
++#define IMUCTRn_OFFSET(n)	((n) < 32 ? IMUCTR0(n) : IMUCTR32(n))
++#define IMSCTLR_OFFSET		(0x0500)
++
++#define MAX_UTLB		(48)
++
++#define REG_SIZE		IMUCTRn_OFFSET(MAX_UTLB)
++#define IMCTR_VAL		(MMUEN | FLUSH)
++#define IMCTR_MM_VAL		(IMCTR_VAL)
++#define IMTTBCR_VAL		(EAE | SL_BIT7 | TSZ0_32BIT)
++#define IMMAIR0_VAL		(0x5500)
++#define IMUCTR_VAL		((CUR_TTSEL << 4) | MMUEN | FLUSH)
++#define IMTTLBR_VAL		(__pa(ipmmu_mmu_pgd) & IMTTLBR_MASK)
++#define IMTTUBR_VAL		(__pa(ipmmu_mmu_pgd) >> 32)
++
++/* Page entry setting */
++#define BLOCK_ENTRY_CONFIG	(0x721 | BIT(2))
++#define IPMMU_BLOCK_PGDVAL(phys_addr)	((phys_addr) | BLOCK_ENTRY_CONFIG)
++
++/* Table entries for H3N - Swap mode */
++#define H3_IPMMU_ADDR_SECTION_0	0x0540000000ULL
++#define H3_IPMMU_ADDR_SECTION_1	0x0040000000ULL
++#define H3_IPMMU_ADDR_SECTION_2	0x0080000000ULL
++#define H3_IPMMU_ADDR_SECTION_3	0x0500000000ULL
++/* Table entries for M3 */
++#define M3_IPMMU_ADDR_SECTION_0	0x0640000000ULL
++#define M3_IPMMU_ADDR_SECTION_1	0x0040000000ULL
++#define M3_IPMMU_ADDR_SECTION_2	0x0080000000ULL
++#define M3_IPMMU_ADDR_SECTION_3	0x0600000000ULL
++/* Table entries for M3N */
++#define M3N_IPMMU_ADDR_SECTION_0	0x04C0000000ULL
++#define M3N_IPMMU_ADDR_SECTION_1	0x0040000000ULL
++#define M3N_IPMMU_ADDR_SECTION_2	0x0080000000ULL
++#define M3N_IPMMU_ADDR_SECTION_3	0x0480000000ULL
++/* Table entries for E3 */
++#define E3_IPMMU_ADDR_SECTION_0	0x0
++#define E3_IPMMU_ADDR_SECTION_1	0x0040000000ULL
++#define E3_IPMMU_ADDR_SECTION_2	0x0080000000ULL
++#define E3_IPMMU_ADDR_SECTION_3	0x0
++
++#define IPMMU_PGDVAL_SECTION_0	IPMMU_BLOCK_PGDVAL(ipmmu_addr_section_0)
++#define IPMMU_PGDVAL_SECTION_1	IPMMU_BLOCK_PGDVAL(ipmmu_addr_section_1)
++#define IPMMU_PGDVAL_SECTION_2	IPMMU_BLOCK_PGDVAL(ipmmu_addr_section_2)
++#define IPMMU_PGDVAL_SECTION_3	IPMMU_BLOCK_PGDVAL(ipmmu_addr_section_3)
++
++static int __handle_registers(struct rcar_ipmmu *ipmmu, unsigned int handling);
++static int handle_registers(struct rcar_ipmmu **ipmmu, unsigned int handling);
++static int ipmmu_probe(struct platform_device *pdev);
++static int ipmmu_remove(struct platform_device *pdev);
++static void create_l1_pgtable(void);
++static void free_lx_pgtable(void);
++static void ipmmu_mmu_startup(void);
++static void ipmmu_mmu_cleanup(void);
++static int ipmmu_mmu_initialize(void);
++static void ipmmu_mmu_deinitialize(void);
++static unsigned int ipmmu_mmu_phys2virt(phys_addr_t paddr);
++static phys_addr_t ipmmu_mmu_virt2phys(unsigned int vaddr);
++static int mm_ipmmu_suspend(struct device *dev);
++static int mm_ipmmu_resume(struct device *dev);
++
++#endif /* IPMMU_MMU_SUPPORT */
++
++#endif	/* __MMNGR_PRIVATE_H__ */
+diff --git a/include/mmngr_private_cmn.h b/include/mmngr_private_cmn.h
+new file mode 100644
+index 000000000..f8a60bd60
+--- /dev/null
++++ b/include/mmngr_private_cmn.h
+@@ -0,0 +1,93 @@
++/*************************************************************************/ /*
++ MMNGR
++
++ Copyright (C) 2016 Renesas Electronics Corporation
++
++ License        Dual MIT/GPLv2
++
++ The contents of this file are subject to the MIT license as set out below.
++
++ Permission is hereby granted, free of charge, to any person obtaining a copy
++ of this software and associated documentation files (the "Software"), to deal
++ in the Software without restriction, including without limitation the rights
++ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ copies of the Software, and to permit persons to whom the Software is
++ furnished to do so, subject to the following conditions:
++
++ The above copyright notice and this permission notice shall be included in
++ all copies or substantial portions of the Software.
++
++ Alternatively, the contents of this file may be used under the terms of
++ the GNU General Public License Version 2 ("GPL") in which case the provisions
++ of GPL are applicable instead of those above.
++
++ If you wish to allow use of your version of this file only under the terms of
++ GPL, and not to allow others to use your version of this file under the terms
++ of the MIT license, indicate your decision by deleting the provisions above
++ and replace them with the notice and other provisions required by GPL as set
++ out in the file called "GPL-COPYING" included in this distribution. If you do
++ not delete the provisions above, a recipient may use your version of this file
++ under the terms of either the MIT license or GPL.
++
++ This License is also included in this distribution in the file called
++ "MIT-COPYING".
++
++ EXCEPT AS OTHERWISE STATED IN A NEGOTIATED AGREEMENT: (A) THE SOFTWARE IS
++ PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
++ BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
++ PURPOSE AND NONINFRINGEMENT; AND (B) IN NO EVENT SHALL THE AUTHORS OR
++ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
++ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++
++
++ GPLv2:
++ If you wish to use this file under the terms of GPL, following terms are
++ effective.
++
++ This program is free software; you can redistribute it and/or modify
++ it under the terms of the GNU General Public License as published by
++ the Free Software Foundation; version 2 of the License.
++
++ This program is distributed in the hope that it will be useful,
++ but WITHOUT ANY WARRANTY; without even the implied warranty of
++ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ GNU General Public License for more details.
++
++ You should have received a copy of the GNU General Public License
++ along with this program; if not, write to the Free Software
++ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++*/ /*************************************************************************/
++#ifndef __MMNGR_PRIVATE_CMN_H__
++#define __MMNGR_PRIVATE_CMN_H__
++
++#define DEVFILE "/dev/rgnmm"
++
++struct MM_PARAM {
++	size_t size;
++	unsigned long long	phy_addr;
++	unsigned int	hard_addr;
++	unsigned long	user_virt_addr;
++	unsigned long	kernel_virt_addr;
++	unsigned int flag;
++};
++
++struct MM_CACHE_PARAM {
++	size_t offset;
++	size_t len;
++};
++
++#define MM_IOC_MAGIC 'm'
++#define MM_IOC_ALLOC	_IOWR(MM_IOC_MAGIC, 0, struct MM_PARAM)
++#define MM_IOC_FREE	_IOWR(MM_IOC_MAGIC, 1, struct MM_PARAM)
++#define MM_IOC_SET	_IOWR(MM_IOC_MAGIC, 2, struct MM_PARAM)
++#define MM_IOC_GET	_IOWR(MM_IOC_MAGIC, 3, struct MM_PARAM)
++#define MM_IOC_ALLOC_CO	_IOWR(MM_IOC_MAGIC, 4, struct MM_PARAM)
++#define MM_IOC_FREE_CO	_IOWR(MM_IOC_MAGIC, 5, struct MM_PARAM)
++#define MM_IOC_SHARE	_IOWR(MM_IOC_MAGIC, 6, struct MM_PARAM)
++#define MM_IOC_FLUSH	_IOWR(MM_IOC_MAGIC, 7, struct MM_CACHE_PARAM)
++#define MM_IOC_INVAL	_IOWR(MM_IOC_MAGIC, 8, struct MM_CACHE_PARAM)
++/* virt to phys */
++#define MM_IOC_VTOP     _IOWR(MM_IOC_MAGIC, 9, struct MM_PARAM)
++
++#endif	/* __MMNGR_PRIVATE_CMN_H__ */
+diff --git a/include/mmngr_public.h b/include/mmngr_public.h
+new file mode 100644
+index 000000000..49a136cfe
+--- /dev/null
++++ b/include/mmngr_public.h
+@@ -0,0 +1,66 @@
++/*************************************************************************/ /*
++ MMNGR
++
++ Copyright (C) 2015-2016 Renesas Electronics Corporation
++
++ License        Dual MIT/GPLv2
++
++ The contents of this file are subject to the MIT license as set out below.
++
++ Permission is hereby granted, free of charge, to any person obtaining a copy
++ of this software and associated documentation files (the "Software"), to deal
++ in the Software without restriction, including without limitation the rights
++ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ copies of the Software, and to permit persons to whom the Software is
++ furnished to do so, subject to the following conditions:
++
++ The above copyright notice and this permission notice shall be included in
++ all copies or substantial portions of the Software.
++
++ Alternatively, the contents of this file may be used under the terms of
++ the GNU General Public License Version 2 ("GPL") in which case the provisions
++ of GPL are applicable instead of those above.
++
++ If you wish to allow use of your version of this file only under the terms of
++ GPL, and not to allow others to use your version of this file under the terms
++ of the MIT license, indicate your decision by deleting the provisions above
++ and replace them with the notice and other provisions required by GPL as set
++ out in the file called "GPL-COPYING" included in this distribution. If you do
++ not delete the provisions above, a recipient may use your version of this file
++ under the terms of either the MIT license or GPL.
++
++ This License is also included in this distribution in the file called
++ "MIT-COPYING".
++
++ EXCEPT AS OTHERWISE STATED IN A NEGOTIATED AGREEMENT: (A) THE SOFTWARE IS
++ PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
++ BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
++ PURPOSE AND NONINFRINGEMENT; AND (B) IN NO EVENT SHALL THE AUTHORS OR
++ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
++ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++
++
++ GPLv2:
++ If you wish to use this file under the terms of GPL, following terms are
++ effective.
++
++ This program is free software; you can redistribute it and/or modify
++ it under the terms of the GNU General Public License as published by
++ the Free Software Foundation; version 2 of the License.
++
++ This program is distributed in the hope that it will be useful,
++ but WITHOUT ANY WARRANTY; without even the implied warranty of
++ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ GNU General Public License for more details.
++
++ You should have received a copy of the GNU General Public License
++ along with this program; if not, write to the Free Software
++ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++*/ /*************************************************************************/
++#ifndef	__MMNGR_PUBLIC_H__
++#define __MMNGR_PUBLIC_H__
++
++#include "mmngr_public_cmn.h"
++
++#endif	/* __MMNGR_PUBLIC_H__ */
+diff --git a/include/mmngr_public_cmn.h b/include/mmngr_public_cmn.h
+new file mode 100644
+index 000000000..a668019d7
+--- /dev/null
++++ b/include/mmngr_public_cmn.h
+@@ -0,0 +1,70 @@
++/*************************************************************************/ /*
++ MMNGR
++
++ Copyright (C) 2016 Renesas Electronics Corporation
++
++ License        Dual MIT/GPLv2
++
++ The contents of this file are subject to the MIT license as set out below.
++
++ Permission is hereby granted, free of charge, to any person obtaining a copy
++ of this software and associated documentation files (the "Software"), to deal
++ in the Software without restriction, including without limitation the rights
++ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ copies of the Software, and to permit persons to whom the Software is
++ furnished to do so, subject to the following conditions:
++
++ The above copyright notice and this permission notice shall be included in
++ all copies or substantial portions of the Software.
++
++ Alternatively, the contents of this file may be used under the terms of
++ the GNU General Public License Version 2 ("GPL") in which case the provisions
++ of GPL are applicable instead of those above.
++
++ If you wish to allow use of your version of this file only under the terms of
++ GPL, and not to allow others to use your version of this file under the terms
++ of the MIT license, indicate your decision by deleting the provisions above
++ and replace them with the notice and other provisions required by GPL as set
++ out in the file called "GPL-COPYING" included in this distribution. If you do
++ not delete the provisions above, a recipient may use your version of this file
++ under the terms of either the MIT license or GPL.
++
++ This License is also included in this distribution in the file called
++ "MIT-COPYING".
++
++ EXCEPT AS OTHERWISE STATED IN A NEGOTIATED AGREEMENT: (A) THE SOFTWARE IS
++ PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
++ BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
++ PURPOSE AND NONINFRINGEMENT; AND (B) IN NO EVENT SHALL THE AUTHORS OR
++ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
++ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
++ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++
++
++ GPLv2:
++ If you wish to use this file under the terms of GPL, following terms are
++ effective.
++
++ This program is free software; you can redistribute it and/or modify
++ it under the terms of the GNU General Public License as published by
++ the Free Software Foundation; version 2 of the License.
++
++ This program is distributed in the hope that it will be useful,
++ but WITHOUT ANY WARRANTY; without even the implied warranty of
++ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ GNU General Public License for more details.
++
++ You should have received a copy of the GNU General Public License
++ along with this program; if not, write to the Free Software
++ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++*/ /*************************************************************************/
++#ifndef	__MMNGR_PUBLIC_CMN_H__
++#define __MMNGR_PUBLIC_CMN_H__
++
++#define MM_KERNELHEAP	0
++#define MM_KERNELHEAP_CACHED	5
++#define MM_CARVEOUT	1
++#define MM_CARVEOUT_SSP	3
++#define MM_CARVEOUT_LOSSY	4
++
++#endif	/* __MMNGR_PUBLIC_CMN_H__ */
+diff --git a/include/mmngrbuf.symvers b/include/mmngrbuf.symvers
+new file mode 100644
+index 000000000..e69de29bb
+diff --git a/include/vsp_drv.h b/include/vsp_drv.h
+new file mode 100644
+index 000000000..9eb4cf8ad
+--- /dev/null
++++ b/include/vsp_drv.h
+@@ -0,0 +1,966 @@
++/*************************************************************************/ /*
++ * VSPM
++ *
++ * Copyright (C) 2015-2017 Renesas Electronics Corporation
++ *
++ * License        Dual MIT/GPLv2
++ *
++ * The contents of this file are subject to the MIT license as set out below.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * Alternatively, the contents of this file may be used under the terms of
++ * the GNU General Public License Version 2 ("GPL") in which case the provisions
++ * of GPL are applicable instead of those above.
++ *
++ * If you wish to allow use of your version of this file only under the terms of
++ * GPL, and not to allow others to use your version of this file under the terms
++ * of the MIT license, indicate your decision by deleting the provisions above
++ * and replace them with the notice and other provisions required by GPL as set
++ * out in the file called "GPL-COPYING" included in this distribution. If you do
++ * not delete the provisions above, a recipient may use your version of this
++ * file under the terms of either the MIT license or GPL.
++ *
++ * This License is also included in this distribution in the file called
++ * "MIT-COPYING".
++ *
++ * EXCEPT AS OTHERWISE STATED IN A NEGOTIATED AGREEMENT: (A) THE SOFTWARE IS
++ * PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
++ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
++ * PARTICULAR PURPOSE AND NONINFRINGEMENT; AND (B) IN NO EVENT SHALL THE AUTHORS
++ * OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
++ * IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ *
++ *
++ * GPLv2:
++ * If you wish to use this file under the terms of GPL, following terms are
++ * effective.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */ /*************************************************************************/
++
++#ifndef _VSP_DRV_H_
++#define _VSP_DRV_H_
++
++/* error code */
++#define E_VSP_PARA_CB				(-201)
++#define E_VSP_PARA_INPAR			(-202)
++
++#define E_VSP_PARA_RPFNUM		(-210)
++#define E_VSP_PARA_RPFORDER		(-211)
++#define E_VSP_PARA_USEMODULE	(-212)
++#define E_VSP_PARA_OUTPAR		(-213)
++#define E_VSP_PARA_CTRLPAR		(-214)
++#define E_VSP_PARA_NOIN			(-215)
++#define E_VSP_PARA_CONNECT		(-216)	/* illegal connection */
++#define E_VSP_PARA_NOPARENT		(-217)	/* not found parent layer */
++#define E_VSP_PARA_NOINPUT		(-218)	/* no input */
++#define E_VSP_PARA_NOMODULE		(-219)	/* no module */
++
++#define E_VSP_PARA_IN_ADR			(-220)
++#define E_VSP_PARA_IN_ADRC0			(-221)
++#define E_VSP_PARA_IN_ADRC1			(-222)
++#define E_VSP_PARA_IN_WIDTH			(-223)
++#define E_VSP_PARA_IN_HEIGHT		(-224)
++#define E_VSP_PARA_IN_WIDTHEX		(-225)
++#define E_VSP_PARA_IN_HEIGHTEX		(-226)
++#define E_VSP_PARA_IN_XOFFSET		(-227)
++#define E_VSP_PARA_IN_YOFFSET		(-228)
++#define E_VSP_PARA_IN_FORMAT		(-229)
++#define E_VSP_PARA_IN_SWAP			(-230)	/* not used */
++#define E_VSP_PARA_IN_XPOSI			(-231)
++#define E_VSP_PARA_IN_YPOSI			(-232)
++#define E_VSP_PARA_IN_CIPM			(-233)
++#define E_VSP_PARA_IN_CEXT			(-234)
++#define E_VSP_PARA_IN_CSC			(-235)
++#define E_VSP_PARA_IN_ITURBT		(-236)
++#define E_VSP_PARA_IN_CLRCNG		(-237)
++#define E_VSP_PARA_IN_VIR			(-238)
++#define E_VSP_PARA_IN_ALPHA			(-239)
++#define E_VSP_PARA_IN_CONNECT		(-240)
++#define E_VSP_PARA_IN_PWD			(-241)
++
++#define E_VSP_PARA_OSD_CLUT			(-250)
++#define E_VSP_PARA_OSD_SIZE			(-251)
++
++#define E_VSP_PARA_ALPHA_ADR		(-260)	/* illegal address pointer */
++#define E_VSP_PARA_ALPHA_CKEY		(-261)
++#define E_VSP_PARA_ALPHA_ASWAP		(-262)	/* not used */
++#define E_VSP_PARA_ALPHA_ASEL		(-263)
++#define E_VSP_PARA_ALPHA_AEXT		(-264)
++#define E_VSP_PARA_ALPHA_IROP		(-265)
++#define E_VSP_PARA_ALPHA_MSKEN		(-266)
++#define E_VSP_PARA_ALPHA_BSEL		(-267)
++#define E_VSP_PARA_ALPHA_MULT		(-268)
++
++#define E_VSP_PARA_OUT_ADR			(-270)
++#define E_VSP_PARA_OUT_ADRC0		(-271)
++#define E_VSP_PARA_OUT_ADRC1		(-272)
++#define E_VSP_PARA_OUT_WIDTH		(-273)
++#define E_VSP_PARA_OUT_HEIGHT		(-274)
++#define E_VSP_PARA_OUT_XOFFSET		(-275)
++#define E_VSP_PARA_OUT_YOFFSET		(-276)
++#define E_VSP_PARA_OUT_XCLIP		(-277)
++#define E_VSP_PARA_OUT_YCLIP		(-278)
++#define E_VSP_PARA_OUT_FORMAT		(-279)
++#define E_VSP_PARA_OUT_SWAP			(-280)
++#define E_VSP_PARA_OUT_PXA			(-281)
++#define E_VSP_PARA_OUT_XCOFFSET		(-282)
++#define E_VSP_PARA_OUT_YCOFFSET		(-283)
++#define E_VSP_PARA_OUT_CSC			(-284)
++#define E_VSP_PARA_OUT_ITURBT		(-285)
++#define E_VSP_PARA_OUT_CLRCNG		(-286)
++#define E_VSP_PARA_OUT_CBRM			(-287)
++#define E_VSP_PARA_OUT_ABRM			(-288)
++#define E_VSP_PARA_OUT_CLMD			(-289)
++#define E_VSP_PARA_OUT_ROTATION		(-290)
++#define E_VSP_PARA_OUT_DITH			(-291)
++#define E_VSP_PARA_OUT_INHSV		(-292)	/* illegal input color space */
++#define E_VSP_PARA_OUT_INWIDTH		(-293)	/* illegal input image width */
++#define E_VSP_PARA_OUT_INHEIGHT		(-294)	/* illegal input image height */
++#define E_VSP_PARA_OUT_NOTCOLOR		(-295)	/* not equal color space */
++#define E_VSP_PARA_OUT_STRIDE_Y		(-296)
++#define E_VSP_PARA_OUT_STRIDE_C		(-297)
++
++#define E_VSP_PARA_BRU_LAYORDER		(-300)
++#define E_VSP_PARA_BRU_ADIV			(-301)
++#define E_VSP_PARA_BRU_DITH_MODE	(-302)	/* illegal dithering mode */
++#define E_VSP_PARA_BRU_DITH_BPP		(-303)	/* illegal dithering format */
++#define E_VSP_PARA_BRU_CONNECT		(-304)
++#define E_VSP_PARA_BRU_INHSV		(-305)	/* illegal input color space */
++#define E_VSP_PARA_BRU_INCOLOR		(-306)	/* different color space */
++
++#define E_VSP_PARA_VIR_ADR		(-310)	/* illegal address pointer */
++#define E_VSP_PARA_VIR_WIDTH	(-311)
++#define E_VSP_PARA_VIR_HEIGHT	(-312)
++#define E_VSP_PARA_VIR_XPOSI	(-313)
++#define E_VSP_PARA_VIR_YPOSI	(-314)
++#define E_VSP_PARA_VIR_PWD		(-315)	/* illegal pwd */
++
++#define E_VSP_PARA_BLEND_RBC		(-320)
++#define E_VSP_PARA_BLEND_CROP		(-321)
++#define E_VSP_PARA_BLEND_AROP		(-322)
++#define E_VSP_PARA_BLEND_FORM		(-323)
++#define E_VSP_PARA_BLEND_COEFX		(-324)
++#define E_VSP_PARA_BLEND_COEFY		(-325)
++#define E_VSP_PARA_BLEND_AFORM		(-326)
++#define E_VSP_PARA_BLEND_ACOEFX		(-327)
++#define E_VSP_PARA_BLEND_ACOEFY		(-328)
++
++#define E_VSP_PARA_ROP_CROP			(-330)
++#define E_VSP_PARA_ROP_AROP			(-331)
++
++#define E_VSP_PARA_SRU_MODE			(-340)
++#define E_VSP_PARA_SRU_PARAM		(-341)
++#define E_VSP_PARA_SRU_ENSCL		(-342)
++#define E_VSP_PARA_SRU_CONNECT		(-343)
++#define E_VSP_PARA_SRU_WIDTH		(-344)	/* illegal image width */
++#define E_VSP_PARA_SRU_HEIGHT		(-345)	/* illegal image height */
++#define E_VSP_PARA_SRU_INHSV		(-346)	/* illegal input color space */
++
++#define E_VSP_PARA_UDS_AMD			(-350)
++#define E_VSP_PARA_UDS_FMD			(-351)
++#define E_VSP_PARA_UDS_CLIP			(-352)
++#define E_VSP_PARA_UDS_ALPHA		(-353)
++#define E_VSP_PARA_UDS_COMP			(-354)
++#define E_VSP_PARA_UDS_CONNECT		(-355)
++#define E_VSP_PARA_UDS_XRATIO		(-356)	/* illegal x_ratio */
++#define E_VSP_PARA_UDS_YRATIO		(-357)	/* illegal y_ratio */
++#define E_VSP_PARA_UDS_OUTCWIDTH	(-358)	/* illegal clipping width */
++#define E_VSP_PARA_UDS_OUTCHEIGHT	(-359)	/* illegal clipping height */
++#define E_VSP_PARA_UDS_INWIDTH		(-360)	/* illegal input width */
++#define E_VSP_PARA_UDS_INHEIGHT		(-361)	/* illegal input height */
++
++#define E_VSP_PARA_BRS_LAYORDER		(-370)
++#define E_VSP_PARA_BRS_ADIV		(-371)
++#define E_VSP_PARA_BRS_DITH_MODE	(-372)	/* illegal dithering mode */
++#define E_VSP_PARA_BRS_DITH_BPP		(-373)	/* illegal dithering format */
++#define E_VSP_PARA_BRS_CONNECT		(-374)
++#define E_VSP_PARA_BRS_INHSV		(-375)	/* illegal input color space */
++#define E_VSP_PARA_BRS_INCOLOR		(-376)	/* different color space */
++
++#define E_VSP_PARA_LUT_ADR			(-600)	/* illegal DL address */
++#define E_VSP_PARA_LUT_SIZE			(-601)	/* illegal DL size */
++#define E_VSP_PARA_LUT_CONNECT		(-602)	/* illegal connecting module */
++
++#define E_VSP_PARA_CLU_MODE			(-610)	/* illegal mode */
++#define E_VSP_PARA_CLU_ADR			(-611)	/* illegal DL address */
++#define E_VSP_PARA_CLU_SIZE			(-613)	/* illegal DL size */
++#define E_VSP_PARA_CLU_CONNECT		(-614)	/* illegal connecting module */
++
++#define E_VSP_PARA_HST_NOTRGB		(-630)	/* illegal input color space */
++#define E_VSP_PARA_HST_CONNECT		(-631)	/* illegal connecting module */
++
++#define E_VSP_PARA_HSI_NOTHSV		(-640)	/* illegal input color space */
++#define E_VSP_PARA_HSI_CONNECT		(-641)	/* illegal connecting module */
++
++#define E_VSP_PARA_HGO_ADR		(-660)	/* illegal address pointer */
++#define E_VSP_PARA_HGO_WIDTH	(-661)	/* illegal widht */
++#define E_VSP_PARA_HGO_HEIGHT	(-662)	/* illegal height */
++#define E_VSP_PARA_HGO_XOFFSET	(-663)	/* illegal x_offset */
++#define E_VSP_PARA_HGO_YOFFSET	(-664)	/* illegal y_offset */
++#define E_VSP_PARA_HGO_BINMODE	(-665)	/* illegal binary mode */
++#define E_VSP_PARA_HGO_MAXRGB	(-669)	/* illegal source component */
++#define E_VSP_PARA_HGO_STEP		(-730)	/* illegal step mode */
++#define E_VSP_PARA_HGO_XSKIP	(-666)	/* illegal skip mode */
++#define E_VSP_PARA_HGO_YSKIP	(-667)	/* illegal skip mode */
++#define E_VSP_PARA_HGO_SMMPT	(-668)	/* illegal sampling module */
++
++#define E_VSP_PARA_HGT_ADR		(-670)	/* illegal address pointer */
++#define E_VSP_PARA_HGT_WIDTH	(-671)	/* illegal width */
++#define E_VSP_PARA_HGT_HEIGHT	(-672)	/* illegal height */
++#define E_VSP_PARA_HGT_XOFFSET	(-673)	/* illegal x_offset */
++#define E_VSP_PARA_HGT_YOFFSET	(-674)	/* illegal y_offset */
++#define E_VSP_PARA_HGT_AREA		(-675)	/* illegal hue area pointer */
++#define E_VSP_PARA_HGT_XSKIP	(-676)	/* illegal skip mode */
++#define E_VSP_PARA_HGT_YSKIP	(-677)	/* illegal skip mode */
++#define E_VSP_PARA_HGT_SMMPT	(-678)	/* illegal sampling module */
++
++#define E_VSP_PARA_SHP_INYUV	(-690)	/* illegal input color space */
++#define E_VSP_PARA_SHP_WIDTH	(-691)	/* illegal input width */
++#define E_VSP_PARA_SHP_HEIGHT	(-692)	/* illegal input height */
++#define E_VSP_PARA_SHP_MODE		(-693)	/* illegal mode */
++#define E_VSP_PARA_SHP_CONNECT	(-694)	/* illegal connecting module */
++
++#define E_VSP_PARA_NOSRU			(-650)
++#define E_VSP_PARA_NOUDS			(-651)
++#define E_VSP_PARA_NOLUT			(-652)
++#define E_VSP_PARA_NOCLU			(-653)
++#define E_VSP_PARA_NOHST			(-654)
++#define E_VSP_PARA_NOHSI			(-655)
++#define E_VSP_PARA_NOBRU			(-656)
++#define E_VSP_PARA_NOHGO			(-657)
++#define E_VSP_PARA_NOHGT			(-658)
++#define E_VSP_PARA_NOSHP			(-659)
++
++#define E_VSP_PARA_DL_ADR			(-680)
++#define E_VSP_PARA_DL_SIZE			(-681)
++
++#define E_VSP_BUSY_RPF_OVER			(-700)
++#define E_VSP_BUSY_MODULE_OVER		(-701)
++
++#define E_VSP_PARA_NOBRS			(-710)
++
++#define E_VSP_PARA_FCNL				(-740)
++
++/* struct vsp_start_t.use_module */
++#define VSP_SRU_USE		(0x0001) /* super-resolution */
++#define VSP_UDS_USE		(0x0002) /* up down scaler */
++#define VSP_LUT_USE		(0x0010) /* look up table */
++#define VSP_CLU_USE		(0x0020) /* cubic look up table */
++#define VSP_HST_USE		(0x0040) /* hue saturation value transform */
++#define VSP_HSI_USE		(0x0080) /* hue saturation value inverse */
++#define VSP_BRU_USE		(0x0100) /* blend rop */
++#define VSP_HGO_USE		(0x0200) /* histogram generator-one */
++#define VSP_HGT_USE		(0x0400) /* histogram generator-two */
++#define VSP_SHP_USE		(0x0800) /* sharpness */
++#define VSP_BRS_USE		(0x1000) /* blend rop sub */
++
++/* RPF module parameter */
++/* input format */
++#define VSP_IN_RGB332				(0x0100) /* RGB332 */
++#define VSP_IN_XRGB4444				(0x0201) /* XRGB4444 */
++#define VSP_IN_RGBX4444				(0x0202) /* RGBX4444 */
++#define VSP_IN_XRGB1555				(0x0204) /* XRGB1555 */
++#define VSP_IN_RGBX5551				(0x0205) /* RGBX5551 */
++#define VSP_IN_RGB565				(0x0206) /* RGB565 */
++#define VSP_IN_AXRGB86666			(0x0407) /* AXRGB86666 */
++#define VSP_IN_RGBXA66668			(0x0408) /* RGBXA66668 */
++#define VSP_IN_XRGBA66668			(0x0409) /* XRGBA66668 */
++#define VSP_IN_ARGBX86666			(0x040A) /* ARGBX86666 */
++#define VSP_IN_AXXXRGB82666			(0x040B) /* AXXXRGB82666 */
++#define VSP_IN_XXXRGBA26668			(0x040C) /* XXXRGBA26668 */
++#define VSP_IN_ARGBXXX86662			(0x040D) /* ARGBXXX86662 */
++#define VSP_IN_RGBXXXA66628			(0x040E) /* RGBXXXA66628 */
++#define VSP_IN_XRGB6666				(0x030F) /* XRGB6666 */
++#define VSP_IN_RGBX6666				(0x0310) /* RGBX6666 */
++#define VSP_IN_XXXRGB2666			(0x0311) /* XXXRGB2666 */
++#define VSP_IN_RGBXXX6662			(0x0312) /* RGBXXX6662 */
++#define VSP_IN_ARGB8888				(0x0413) /* ARGB8888 */
++#define VSP_IN_RGBA8888				(0x0414) /* RGBA8888 */
++#define VSP_IN_RGB888				(0x0315) /* RGB888 */
++#define VSP_IN_XXRGB7666			(0x0416) /* XXRGB7666 */
++#define VSP_IN_XRGB14666			(0x0417) /* XRGB14666 */
++#define VSP_IN_BGR888				(0x0318) /* BGR888 */
++#define VSP_IN_ARGB4444				(0x0219) /* ARGB4444 */
++#define VSP_IN_RGBA4444				(0x021A) /* RGBA4444 */
++#define VSP_IN_ARGB1555				(0x021B) /* ARGB1555 */
++#define VSP_IN_RGBA5551				(0x021C) /* RGBA5551 */
++#define VSP_IN_ABGR4444				(0x021D) /* ABGR4444 */
++#define VSP_IN_BGRA4444				(0x021E) /* BGRA4444 */
++#define VSP_IN_ABGR1555				(0x021F) /* ABGR1555 */
++#define VSP_IN_BGRA5551				(0x0220) /* BGRA5551 */
++#define VSP_IN_XXXBGR2666			(0x0321) /* XXXBGR2666 */
++#define VSP_IN_ABGR8888				(0x0422) /* ABGR8888 */
++#define VSP_IN_XRGB16565			(0x0423) /* XRGB16565 */
++#define VSP_IN_RGB_CLUT_DATA		(0x013F) /* RGB_CLUT_DATA */
++#define VSP_IN_YUV444_SEMI_PLANAR	(0x0040) /* YCbCr4:4:4 Semi-Planar */
++#define VSP_IN_YUV422_SEMI_PLANAR	(0x0041) /* YCbCr4:2:2 Semi-Planar */
++#define VSP_IN_YUV420_SEMI_PLANAR	(0x0042) /* YCbCr4:2:0 Semi-Planar */
++#define VSP_IN_YUV444_INTERLEAVED	(0x0046) /* YCbCr4:4:4 Interleaved */
++#define VSP_IN_YUV422_INTERLEAVED0	(0x0047) /* YCbCr4:2:2 Inter type0 */
++#define VSP_IN_YUV422_INTERLEAVED1	(0x0048) /* YCbCr4:2:2 Inter type1 */
++#define VSP_IN_YUV420_INTERLEAVED	(0x0049) /* YCbCr4:2:0 Interleaved */
++#define VSP_IN_YUV444_PLANAR		(0x004A) /* YCbCr4:4:4 Planar */
++#define VSP_IN_YUV422_PLANAR		(0x004B) /* YCbCr4:2:2 Planar */
++#define VSP_IN_YUV420_PLANAR		(0x004C) /* YCbCr4:2:0 Planar */
++#define VSP_IN_YUV_CLUT_DATA		(0x017F) /* YCbCr_CLUT_DATA */
++
++#define VSP_IN_YUV422_SEMI_NV16		VSP_IN_YUV422_SEMI_PLANAR
++#define VSP_IN_YUV422_SEMI_NV61		(0x4041) /* YCbCr4:2:2 Semi(NV61) */
++#define VSP_IN_YUV420_SEMI_NV12		VSP_IN_YUV420_SEMI_PLANAR
++#define VSP_IN_YUV420_SEMI_NV21		(0x4042) /* YCbCr4:2:0 semi(NV21) */
++#define VSP_IN_YUV422_INT0_UYVY		VSP_IN_YUV422_INTERLEAVED0
++#define VSP_IN_YUV422_INT0_YUY2		(0x8047) /* YCbCr4:2:2 type0(YUY2) */
++#define VSP_IN_YUV422_INT0_YVYU		(0xC047) /* YCbCr4:2:2 type0(YVYU) */
++
++/* swap setting */
++#define VSP_SWAP_NO			(0x00)	/* disable */
++#define VSP_SWAP_B			(0x01)	/* byte units */
++#define VSP_SWAP_W			(0x02)	/* word units */
++#define VSP_SWAP_L			(0x04)	/* longword units */
++#define VSP_SWAP_LL			(0x08)	/* LONG LWORD units */
++
++/* parent setting */
++#define VSP_LAYER_CHILD		(0x01)	/* child */
++#define VSP_LAYER_PARENT	(0x02)	/* parent */
++
++/* horizontal chrominance interpolation method setting */
++#define VSP_CIPM_0_HOLD		(0x00)	/* nearest-neighbor method */
++#define VSP_CIPM_BI_LINEAR	(0x01)	/* bilinear method */
++
++/* lower-bit color data extension method setting */
++#define VSP_CEXT_EXPAN		(0x00)	/* extended with 0 */
++#define VSP_CEXT_COPY		(0x01)	/* copied to the lower-order bits */
++#define VSP_CEXT_EXPAN_MAX	(0x02)	/* extended with 0 */
++				/* maximum value is limitede to 0xFF */
++
++/* color space conversion enable */
++#define VSP_CSC_OFF			(0x00)	/* disable */
++#define VSP_CSC_ON			(0x01)	/* enable */
++
++/* select of color space conversion ITU-R BT */
++#define VSP_ITURBT_601		(0x00)	/* ITU-R BT601 */
++#define VSP_ITURBT_709		(0x01)	/* ITU-R BT709 */
++
++/* select of color space conversion scale */
++#define VSP_ITU_COLOR		(0x00)	/* YUV[16,235/140] <-> RGB[0,255] */
++#define VSP_FULL_COLOR		(0x01)	/* Full scale */
++
++/* virtual input enable */
++#define VSP_NO_VIR			(0x00)	/* disable */
++#define VSP_VIR				(0x01)	/* enable */
++
++/* comparison color data setting */
++#define VSP_ALPHA_NO		(0x00)	/* disable */
++#define VSP_ALPHA_AL1		(0x01)	/* comparision alpha1 enable */
++#define VSP_ALPHA_AL2		(0x02)	/* comparision alpha2 enable */
++
++/* alpha format and processing method select */
++#define VSP_ALPHA_NUM1	(0x00)	/* 1,4 or 8bit packed alpha + plane alpha */
++#define VSP_ALPHA_NUM2	(0x01)	/* 8-bit plane alpha */
++#define VSP_ALPHA_NUM3	(0x02)	/* 1-bit packed alpha + plane alpha */
++#define VSP_ALPHA_NUM4	(0x03)	/* 1-bit plane alpha */
++#define VSP_ALPHA_NUM5	(0x04)	/* Fixed alpha */
++
++/* lower-bit alpha value extension method set */
++#define VSP_AEXT_EXPAN		(0x00)	/* extended with 0 */
++#define VSP_AEXT_COPY		(0x01)	/* copied to the lower-order bits */
++#define VSP_AEXT_EXPAN_MAX	(0x02)	/* extended with 0. max limited 0xFF */
++
++/* ROP oprator */
++enum {
++	VSP_IROP_NOP = 0,				/* NOP(D) */
++	VSP_IROP_AND,					/* AND(S & D) */
++	VSP_IROP_AND_REVERSE,			/* AND_REVERSE(S & ~D) */
++	VSP_IROP_COPY,					/* COPY(S) */
++	VSP_IROP_AND_INVERTED,			/* AND_INVERTED(~S & D) */
++	VSP_IROP_CLEAR,					/* CLEAR(0) */
++	VSP_IROP_XOR,					/* XOR(S ^ D) */
++	VSP_IROP_OR,					/* OR(S | D) */
++	VSP_IROP_NOR,					/* NOR(~(S | D)) */
++	VSP_IROP_EQUIV,					/* EQUIV(~(S ^ D)) */
++	VSP_IROP_INVERT,				/* INVERT(~D) */
++	VSP_IROP_OR_REVERSE,			/* OR_REVERSE(S | ~D) */
++	VSP_IROP_COPY_INVERTED,			/* COPY_INVERTED(~S) */
++	VSP_IROP_OR_INVERTED,			/* OR_INVERTED(~S | D) */
++	VSP_IROP_NAND,					/* NAND(~(S & D)) */
++	VSP_IROP_SET,					/* SET(all 1) */
++	VSP_IROP_MAX
++};
++
++/* mask generation specification */
++#define VSP_MSKEN_ALPHA		(0x00)	/* use alpha plane */
++#define VSP_MSKEN_COLOR		(0x01)	/* use comparison value */
++
++/* alpha bit counte conversion selection */
++#define VSP_ALPHA_8BIT		(0x00) /* 8bit alpha is converted to 1bit */
++#define VSP_ALPHA_1BIT		(0x01) /* alpha value goes through */
++
++/* color key unit mode select */
++#define VSP_CKEY_THROUGH	(0x00) /* alpha and image data go through */
++#define VSP_CKEY_TRANS_COLOR1	(0x01) /* transparent color mode */
++#define VSP_CKEY_TRANS_COLOR2	(0x02) /* (1 color or 2 colors) */
++#define VSP_CKEY_MATCHED_COLOR	(0x03) /* color replace mode */
++#define VSP_CKEY_LUMA_THRESHOLD (0x04) /* color-luma threshold mode */
++
++/* multiple unit mode select */
++#define VSP_MULT_THROUGH		(0x00) /* alpha data go through */
++#define VSP_MULT_RATIO			(0x01) /* multiple by ratio */
++#define VSP_MULT_ALPHA			(0x02) /* multiple by alpha data */
++#define VSP_MULT_RATIO_ALPHA	(0x03) /* multiple by ratio and alpha */
++
++/* WPF module parameter */
++/* output format */
++#define VSP_OUT_RGB332				VSP_IN_RGB332
++#define VSP_OUT_XRGB4444			VSP_IN_XRGB4444
++#define VSP_OUT_RGBX4444			VSP_IN_RGBX4444
++#define VSP_OUT_XRGB1555			VSP_IN_XRGB1555
++#define VSP_OUT_RGBX5551			VSP_IN_RGBX5551
++#define VSP_OUT_RGB565				VSP_IN_RGB565
++#define VSP_OUT_PXRGB86666			VSP_IN_AXRGB86666
++#define VSP_OUT_RGBXP66668			VSP_IN_RGBXA66668
++#define VSP_OUT_XRGBP66668			VSP_IN_XRGBA66668
++#define VSP_OUT_PRGBX86666			VSP_IN_ARGBX86666
++#define VSP_OUT_PXXXRGB82666		VSP_IN_AXXXRGB82666
++#define VSP_OUT_XXXRGBP26668		VSP_IN_XXXRGBA26668
++#define VSP_OUT_PRGBXXX86662		VSP_IN_ARGBXXX86662
++#define VSP_OUT_RGBXXXP66628		VSP_IN_RGBXXXA66628
++#define VSP_OUT_XRGB6666			VSP_IN_XRGB6666
++#define VSP_OUT_RGBX6666			VSP_IN_RGBX6666
++#define VSP_OUT_XXXRGB2666			VSP_IN_XXXRGB2666
++#define VSP_OUT_RGBXXX6662			VSP_IN_RGBXXX6662
++#define VSP_OUT_PRGB8888			VSP_IN_ARGB8888
++#define VSP_OUT_RGBP8888			VSP_IN_RGBA8888
++#define VSP_OUT_RGB888				VSP_IN_RGB888
++#define VSP_OUT_XXRGB7666			VSP_IN_XXRGB7666
++#define VSP_OUT_XRGB14666			VSP_IN_XRGB14666
++#define VSP_OUT_BGR888				VSP_IN_BGR888
++#define VSP_OUT_PRGB4444			VSP_IN_ARGB4444
++#define VSP_OUT_RGBP4444			VSP_IN_RGBA4444
++#define VSP_OUT_PRGB1555			VSP_IN_ARGB1555
++#define VSP_OUT_RGBP5551			VSP_IN_RGBA5551
++#define VSP_OUT_PBGR4444			VSP_IN_ABGR4444
++#define VSP_OUT_BGRP4444			VSP_IN_BGRA4444
++#define VSP_OUT_PBGR1555			VSP_IN_ABGR1555
++#define VSP_OUT_BGRP5551			VSP_IN_BGRA5551
++#define VSP_OUT_XXXBGR2666			VSP_IN_XXXBGR2666
++#define VSP_OUT_PBGR8888			VSP_IN_ABGR8888
++#define VSP_OUT_XRGB16565			VSP_IN_XRGB16565
++#define VSP_OUT_YUV444_SEMI_PLANAR	VSP_IN_YUV444_SEMI_PLANAR
++#define VSP_OUT_YUV422_SEMI_PLANAR	VSP_IN_YUV422_SEMI_PLANAR
++#define VSP_OUT_YUV420_SEMI_PLANAR	VSP_IN_YUV420_SEMI_PLANAR
++#define VSP_OUT_YUV444_INTERLEAVED	VSP_IN_YUV444_INTERLEAVED
++#define VSP_OUT_YUV422_INTERLEAVED0	VSP_IN_YUV422_INTERLEAVED0
++#define VSP_OUT_YUV422_INTERLEAVED1	VSP_IN_YUV422_INTERLEAVED1
++#define VSP_OUT_YUV420_INTERLEAVED	VSP_IN_YUV420_INTERLEAVED
++#define VSP_OUT_YUV444_PLANAR		VSP_IN_YUV444_PLANAR
++#define VSP_OUT_YUV422_PLANAR		VSP_IN_YUV422_PLANAR
++#define VSP_OUT_YUV420_PLANAR		VSP_IN_YUV420_PLANAR
++
++#define VSP_OUT_YUV422_SEMI_NV16	VSP_IN_YUV422_SEMI_NV16
++#define VSP_OUT_YUV422_SEMI_NV61	VSP_IN_YUV422_SEMI_NV61
++#define VSP_OUT_YUV420_SEMI_NV12	VSP_IN_YUV420_SEMI_NV12
++#define VSP_OUT_YUV420_SEMI_NV21	VSP_IN_YUV420_SEMI_NV21
++#define VSP_OUT_YUV422_INT0_UYVY	VSP_IN_YUV422_INT0_UYVY
++#define VSP_OUT_YUV422_INT0_YUY2	VSP_IN_YUV422_INT0_YUY2
++#define VSP_OUT_YUV422_INT0_YVYU	VSP_IN_YUV422_INT0_YVYU
++
++/* PAD data select */
++#define VSP_PAD_P				(0x00)	/* PAD value */
++#define VSP_PAD_IN				(0x01)	/* alpha value */
++
++/* bit count reduction method selection for data storage in packed RGB */
++#define VSP_CSC_ROUND_DOWN			(0x00)	/* truncated */
++#define VSP_CSC_ROUND_OFF			(0x01)	/* rounding */
++
++/* bit count reduction method selection for data storage in PAD */
++#define VSP_CONVERSION_ROUNDDOWN	(0x00)	/* truncated */
++#define VSP_CONVERSION_ROUNDING		(0x01)	/* rounding */
++#define VSP_CONVERSION_THRESHOLD	(0x02)	/* comparison */
++
++/* color data clipping method */
++#define VSP_CLMD_NO				(0x00)	/* not clipped */
++#define VSP_CLMD_MODE1			(0x01)	/* YCbCr mode1 */
++#define VSP_CLMD_MODE2			(0x02)	/* YCbCr mode2 */
++
++/* FCNL compression activation */
++#define VSP_FCNL_OFF	(0x00)	/* not compress data with FCNL */
++#define VSP_FCNL_ON		(0x01)	/* compress data with FCNL */
++
++/* rotation processing select */
++enum {
++	VSP_ROT_OFF = 0,	/* no rotation or flipping */
++	VSP_ROT_V_FLIP,		/* vertical flipping */
++	VSP_ROT_H_FLIP,		/* horizontal flipping */
++	VSP_ROT_180,		/* 180 rotation */
++	VSP_ROT_90,			/* 90 rotation */
++	VSP_ROT_90_V_FLIP,	/* 90 rotation and V flipping */
++	VSP_ROT_90_H_FLIP,	/* 90 rotation and H flipping */
++	VSP_ROT_270			/* 270 rotation */
++};
++
++/* SRU module parameter */
++/* super-resolution mode */
++#define VSP_SRU_MODE1				(0x00)	/* without scaling */
++#define VSP_SRU_MODE2				(0x40)	/* double scale-up */
++
++/* super-resolution color */
++#define VSP_SRU_RCR					(0x08)	/* R or Cr */
++#define VSP_SRU_GY					(0x04)	/* G or Y */
++#define VSP_SRU_BCB					(0x02)	/* B or Cb */
++
++/* super-resolution level */
++enum {
++	VSP_SCL_LEVEL1 = 0,		/* weak */
++	VSP_SCL_LEVEL2,
++	VSP_SCL_LEVEL3,
++	VSP_SCL_LEVEL4,
++	VSP_SCL_LEVEL5,
++	VSP_SCL_LEVEL6,			/* strong */
++	VSP_SCL_LEVEL_MAX
++};
++
++/* UDS module parameter */
++/* pixel count at scale-up */
++#define VSP_AMD_NO	(0x00)	/* 1 + int((n-1)*scale-up factor) */
++#define VSP_AMD		(0x01)	/* int(n*scale-up factor) */
++
++/* alpha data threshold comparision enable/disable */
++#define VSP_CLIP_OFF				(0x00)	/* disable */
++#define VSP_CLIP_ON					(0x01)	/* enable */
++
++/* scale-up/down of alpha plane */
++#define VSP_ALPHA_OFF				(0x00)	/* disable */
++#define VSP_ALPHA_ON				(0x01)	/* enable */
++
++/* pixel component interpolation method */
++#define VSP_COMPLEMENT_BIL			(0x00)	/* bilinear */
++#define VSP_COMPLEMENT_NN			(0x01)	/* nearest neighbor */
++#define VSP_COMPLEMENT_BC			(0x02)	/* multi-tap mode */
++
++/* CLU module parameter */
++/* LUT dimension number */
++#define VSP_CLU_MODE_3D			(0x00)	/* 3D mode */
++#define VSP_CLU_MODE_2D			(0x01)	/* 2D mode */
++#define VSP_CLU_MODE_3D_AUTO	(0x80)	/* 3D mode with auto addr inc */
++#define VSP_CLU_MODE_2D_AUTO	(0x81)	/* 2D mode with auto addr inc */
++
++/* BRU module parameter */
++/* select input layer */
++#define VSP_LAY_NO				(0x00)	/* */
++#define VSP_LAY_1				(0x01)	/* input source 1 */
++#define VSP_LAY_2				(0x02)	/* input source 2 */
++#define VSP_LAY_3				(0x03)	/* input source 3 */
++#define VSP_LAY_4				(0x04)	/* input source 4 */
++#define VSP_LAY_VIRTUAL			(0x05)	/* input virtual */
++#define VSP_LAY_5				(0x06)	/* input source 5 */
++
++/* color data normalization */
++#define VSP_DIVISION_OFF		(0x00)	/* disable */
++#define VSP_DIVISION_ON			(0x01)	/* enable */
++
++/* dithering mode */
++#define VSP_DITH_COLOR_REDUCTION (0x01) /* color reduction dithering */
++#define VSP_DITH_ORDERED_DITHER	 (0x02) /* ordered dither */
++
++/* number of color after dithering */
++#define VSP_DITH_OFF		(0x00)	/* disable */
++#define VSP_DITH_18BPP		(0x01)	/* 18bpp(RGB666:260000 colors) */
++#define VSP_DITH_16BPP		(0x02)	/* 16bpp(RGB565:65535 colors) */
++#define VSP_DITH_15BPP		(0x03)	/* 15bpp(RGB555:32768 colors) */
++#define VSP_DITH_12BPP		(0x04)	/* 12bpp(RGB666:4096 colors) */
++#define VSP_DITH_8BPP		(0x05)	/* 8bpp(RGB666:256 colors) */
++
++/* ROP Unit method */
++#define VSP_RBC_ROP				(0x00)	/* raster opration */
++#define VSP_RBC_BLEND			(0x01)	/* blend opration */
++
++/* blending expression selection */
++#define VSP_FORM_BLEND0				(0x00)	/* + */
++#define VSP_FORM_BLEND1				(0x01)	/* - */
++
++/* blending coefficient X selection */
++enum {
++	VSP_COEFFICIENT_BLENDX1 = 0,	/* (DST) */
++	VSP_COEFFICIENT_BLENDX2,		/* 255 - (DST) */
++	VSP_COEFFICIENT_BLENDX3,		/* (SRC) */
++	VSP_COEFFICIENT_BLENDX4,		/* 255 - (SRC) */
++	VSP_COEFFICIENT_BLENDX5,		/* (acoefx_fix) */
++	VSP_COEFFICIENT_BLENDX_MAX
++};
++
++/* blending coefficient Y selection */
++enum {
++	VSP_COEFFICIENT_BLENDY1 = 0,	/* (DST) */
++	VSP_COEFFICIENT_BLENDY2,		/* 255 - (DST) */
++	VSP_COEFFICIENT_BLENDY3,		/* (SRC) */
++	VSP_COEFFICIENT_BLENDY4,		/* 255 - (SRC) */
++	VSP_COEFFICIENT_BLENDY5,		/* (acoefx_fix) */
++	VSP_COEFFICIENT_BLENDY_MAX
++};
++
++/* blending alpha creation expression */
++#define VSP_FORM_ALPHA0				(0x00)	/* + */
++#define VSP_FORM_ALPHA1				(0x01)	/* - */
++
++/* alpha creation coefficient X */
++enum {
++	VSP_COEFFICIENT_ALPHAX1 = 0,	/* (DST) */
++	VSP_COEFFICIENT_ALPHAX2,		/* 255 - (DST) */
++	VSP_COEFFICIENT_ALPHAX3,		/* (SRC) */
++	VSP_COEFFICIENT_ALPHAX4,		/* 255 - (SRC) */
++	VSP_COEFFICIENT_ALPHAX5,		/* (acoefx_fix) */
++	VSP_COEFFICIENT_ALPHAX_MAX
++};
++
++/* alpha creation coefficient Y */
++enum {
++	VSP_COEFFICIENT_ALPHAY1 = 0,	/* (DST) */
++	VSP_COEFFICIENT_ALPHAY2,		/* 255 - (DST) */
++	VSP_COEFFICIENT_ALPHAY3,		/* (SRC) */
++	VSP_COEFFICIENT_ALPHAY4,		/* 255 - (SRC) */
++	VSP_COEFFICIENT_ALPHAY5,		/* (acoefx_fix) */
++	VSP_COEFFICIENT_ALPHAY_MAX
++};
++
++/* HGO,HGT module parameter */
++#define VSP_STRAIGHT_BINARY		(0x00)	/* straight binary mode */
++#define VSP_OFFSET_BINARY		(0x50)	/* offset binary mode */
++
++#define VSP_MAXRGB_OFF			(0x00)	/* 3 color components */
++#define VSP_MAXRGB_ON			(0x80)	/* max value of RGB */
++
++#define VSP_STEP_64				(0x00)	/* 64 step mode */
++#define VSP_STEP_256			(0x04)	/* 256 step mode */
++
++#define VSP_SKIP_OFF			(0x00)	/* disable */
++#define VSP_SKIP_1_2			(0x01)	/* every two pixels */
++#define VSP_SKIP_1_4			(0x02)	/* every four pixels */
++
++#define VSP_SMPPT_SRC1				0
++#define VSP_SMPPT_SRC2				1
++#define VSP_SMPPT_SRC3				2
++#define VSP_SMPPT_SRC4				3
++#define VSP_SMPPT_SRC5				4
++#define VSP_SMPPT_SRU				16
++#define VSP_SMPPT_UDS				17
++#define VSP_SMPPT_LUT				22
++#define VSP_SMPPT_BRU				27
++#define VSP_SMPPT_CLU				29
++#define VSP_SMPPT_HST				30
++#define VSP_SMPPT_HSI				31
++#define VSP_SMPPT_SHP				46
++
++/* SHP module parameter */
++#define VSP_SHP_SHARP			(0x00)	/* shapness */
++#define VSP_SHP_UNSHARP			(0x02)	/* unsharpness */
++
++struct vsp_dl_t {
++	unsigned int hard_addr;	/* DL buffer address for H/W IP */
++	void *virt_addr;		/* DL buffer address for CPU */
++	unsigned short tbl_num;	/* table number(max 16383) */
++	void *mem_par;			/* reserved */
++};
++
++struct vsp_irop_unit_t {
++	unsigned char op_mode;
++	unsigned char ref_sel;
++	unsigned char bit_sel;
++	unsigned long comp_color;
++	unsigned long irop_color0;
++	unsigned long irop_color1;
++};
++
++struct vsp_ckey_unit_t {
++	unsigned char mode;
++	unsigned long color1;
++	unsigned long color2;
++};
++
++struct vsp_mult_unit_t {
++	unsigned char a_mmd;
++	unsigned char p_mmd;
++	unsigned char ratio;
++};
++
++struct vsp_alpha_unit_t {
++	unsigned int addr_a;
++	unsigned short stride_a;
++	unsigned char swap;
++	unsigned char asel;
++	unsigned char aext;
++	unsigned char anum0;
++	unsigned char anum1;
++	unsigned char afix;
++	struct vsp_irop_unit_t *irop;
++	struct vsp_ckey_unit_t *ckey;
++	struct vsp_mult_unit_t *mult;
++};
++
++struct vsp_src_t {
++	unsigned int addr;		/* Y or RGB buffer address */
++	unsigned int addr_c0;	/* CbCr or CB buffer address */
++	unsigned int addr_c1;	/* Cr buffer address */
++	unsigned short stride;
++	unsigned short stride_c;
++	unsigned short width;
++	unsigned short height;
++	unsigned short width_ex;
++	unsigned short height_ex;
++	unsigned short x_offset;
++	unsigned short y_offset;
++	unsigned short format;
++	unsigned char swap;
++	unsigned short x_position;
++	unsigned short y_position;
++	unsigned char pwd;
++	unsigned char cipm;
++	unsigned char cext;
++	unsigned char csc;
++	unsigned char iturbt;
++	unsigned char clrcng;
++	unsigned char vir;
++	unsigned long vircolor;
++	struct vsp_dl_t *clut;
++	struct vsp_alpha_unit_t *alpha;
++	unsigned long connect;
++};
++
++struct vsp_dst_t {
++	unsigned int addr;		/* Y or RGB buffer address */
++	unsigned int addr_c0;	/* CbCr or CB buffer address */
++	unsigned int addr_c1;	/* Cr buffer address */
++	unsigned short stride;
++	unsigned short stride_c;
++	unsigned short width;
++	unsigned short height;
++	unsigned short x_offset;
++	unsigned short y_offset;
++	unsigned short format;
++	unsigned char swap;
++	unsigned char pxa;
++	unsigned char pad;
++	unsigned short x_coffset;
++	unsigned short y_coffset;
++	unsigned char csc;
++	unsigned char iturbt;
++	unsigned char clrcng;
++	unsigned char cbrm;
++	unsigned char abrm;
++	unsigned char athres;
++	unsigned char clmd;
++	unsigned char dith;
++	unsigned char rotation;
++	struct fcp_info_t *fcp;
++};
++
++/* SRU parameter */
++struct vsp_sru_t {
++	unsigned char mode;
++	unsigned char param;
++	unsigned short enscl;
++	unsigned char fxa;
++	unsigned long connect;
++};
++
++/* UDS parameter */
++struct vsp_uds_t {
++	unsigned char amd;
++	unsigned char clip;
++	unsigned char alpha;
++	unsigned char complement;
++	unsigned char athres0;
++	unsigned char athres1;
++	unsigned char anum0;
++	unsigned char anum1;
++	unsigned char anum2;
++	unsigned short x_ratio;
++	unsigned short y_ratio;
++	unsigned long connect;
++};
++
++/* LUT parameter */
++struct vsp_lut_t {
++	struct vsp_dl_t lut;
++	unsigned char fxa;
++	unsigned long connect;
++};
++
++/* CLU parameter */
++struct vsp_clu_t {
++	unsigned char mode;
++	struct vsp_dl_t clu;
++	unsigned char fxa;
++	unsigned long connect;
++};
++
++/* HST parameter */
++struct vsp_hst_t {
++	unsigned char fxa;
++	unsigned long connect;
++};
++
++/* HSI parameter */
++struct vsp_hsi_t {
++	unsigned char fxa;
++	unsigned long connect;
++};
++
++/* BRU parameter */
++struct vsp_bld_dither_t {
++	unsigned char mode;		/* dither mode */
++	unsigned char bpp;		/* number of colort after dither */
++};
++
++struct vsp_bld_vir_t {
++	unsigned short width;
++	unsigned short height;
++	unsigned short x_position;
++	unsigned short y_position;
++	unsigned char pwd;
++	unsigned long color;
++};
++
++struct vsp_bld_ctrl_t {
++	unsigned char rbc;
++	unsigned char crop;
++	unsigned char arop;
++	unsigned char blend_formula;
++	unsigned char blend_coefx;
++	unsigned char blend_coefy;
++	unsigned char aformula;
++	unsigned char acoefx;
++	unsigned char acoefy;
++	unsigned char acoefx_fix;
++	unsigned char acoefy_fix;
++};
++
++struct vsp_bld_rop_t {
++	unsigned char crop;
++	unsigned char arop;
++};
++
++struct vsp_bru_t {
++	unsigned long lay_order;
++	unsigned char adiv;
++	struct vsp_bld_dither_t *dither_unit[5];
++	struct vsp_bld_vir_t *blend_virtual;
++	struct vsp_bld_ctrl_t *blend_unit_a;
++	struct vsp_bld_ctrl_t *blend_unit_b;
++	struct vsp_bld_ctrl_t *blend_unit_c;
++	struct vsp_bld_ctrl_t *blend_unit_d;
++	struct vsp_bld_ctrl_t *blend_unit_e;
++	struct vsp_bld_rop_t *rop_unit;
++	unsigned long connect;
++};
++
++/* BRS parameter */
++struct vsp_brs_t {
++	unsigned long lay_order;
++	unsigned char adiv;
++	struct vsp_bld_dither_t *dither_unit[2];
++	struct vsp_bld_vir_t *blend_virtual;
++	struct vsp_bld_ctrl_t *blend_unit_a;
++	struct vsp_bld_ctrl_t *blend_unit_b;
++	unsigned long connect;
++};
++
++/* HGO parameter */
++struct vsp_hgo_t {
++	/* histogram detection window */
++	unsigned int hard_addr;		/* use 1088 bytes */
++	void *virt_addr;
++	void *mem_par;				/* reserved */
++	unsigned short width;		/* horizontal size */
++	unsigned short height;		/* vertical size */
++	unsigned short x_offset;	/* horizontal offset */
++	unsigned short y_offset;	/* vertical offset*/
++	unsigned char binary_mode;	/* offset binary mode */
++	unsigned char maxrgb_mode;	/* source component setting */
++	unsigned char step_mode;	/* step of Y/MaxRGB setting */
++	unsigned short x_skip;		/* horizontal pixel skipping mode */
++	unsigned short y_skip;		/* vertical pixel skipping mode */
++
++	unsigned long sampling;		/* sampling module */
++};
++
++/* HGT parameter */
++struct vsp_hue_area_t {
++	unsigned char lower;		/* lower boundary value */
++	unsigned char upper;		/* upper boundary value */
++};
++
++struct vsp_hgt_t {
++	/* histogram detection window */
++	unsigned int hard_addr;		/* use 800 bytes */
++	void *virt_addr;
++	void *mem_par;				/* reserved */
++	unsigned short width;		/* horizontal size */
++	unsigned short height;		/* vertical size */
++	unsigned short x_offset;	/* horizontal offset */
++	unsigned short y_offset;	/* vertical offset*/
++	unsigned short x_skip;		/* horizontal pixel skipping mode */
++	unsigned short y_skip;		/* vertical pixel skipping mode */
++	struct vsp_hue_area_t area[6];	/* hue area */
++
++	unsigned long sampling;		/* sampling module */
++};
++
++/* SHP parameter */
++struct vsp_shp_t {
++	unsigned char mode;
++	unsigned char gain0;		/* param 0 */
++	unsigned char limit0;		/* param 1 */
++	unsigned char gain10;		/* param 2 */
++	unsigned char limit10;		/* param 3 */
++	unsigned char gain11;		/* param 4 */
++	unsigned char limit11;		/* param 5 */
++	unsigned char gain20;		/* param 6 */
++	unsigned char limit20;		/* param 7 */
++	unsigned char gain21;		/* param 6 */
++	unsigned char limit21;		/* param 7 */
++	unsigned char fxa;			/* fixed alpha value */
++	unsigned long connect;		/* connection module */
++};
++
++struct vsp_ctrl_t {
++	struct vsp_sru_t *sru;		/* super-resolution */
++	struct vsp_uds_t *uds;		/* up down scaler */
++	struct vsp_lut_t *lut;		/* look up table */
++	struct vsp_clu_t *clu;		/* cubic look up table */
++	struct vsp_hst_t *hst;		/* hue saturation value transform */
++	struct vsp_hsi_t *hsi;		/* hue saturation value inverse */
++	struct vsp_bru_t *bru;		/* blend rop */
++	struct vsp_brs_t *brs;		/* blend rop sub */
++	struct vsp_hgo_t *hgo;		/* histogram generator-one */
++	struct vsp_hgt_t *hgt;		/* histogram generator-two */
++	struct vsp_shp_t *shp;		/* sharpness */
++};
++
++struct vsp_start_t {
++	unsigned char rpf_num;			/* RPF number */
++	unsigned long rpf_order;		/* RPF order */
++	unsigned long use_module;		/* using module */
++	struct vsp_src_t *src_par[5];	/* source parameter */
++	struct vsp_dst_t *dst_par;		/* destination parameter */
++	struct vsp_ctrl_t *ctrl_par;	/* module parameter */
++	struct vsp_dl_t dl_par;			/* work memory for DL */
++};
++#endif
+diff --git a/include/vspm.symvers b/include/vspm.symvers
+new file mode 100644
+index 000000000..6d52b7f35
+--- /dev/null
++++ b/include/vspm.symvers
+@@ -0,0 +1,5 @@
++0x00000000	vspm_get_status	/home/lb/rzv_vlp_v3.0.5/build/tmp/work/smarc_rzv2l-poky-linux/kernel-module-vspm/1.0-r0/git/vspm-module/files/vspm/drv/vspm	EXPORT_SYMBOL	
++0x00000000	vspm_quit_driver	/home/lb/rzv_vlp_v3.0.5/build/tmp/work/smarc_rzv2l-poky-linux/kernel-module-vspm/1.0-r0/git/vspm-module/files/vspm/drv/vspm	EXPORT_SYMBOL	
++0x00000000	vspm_cancel_job	/home/lb/rzv_vlp_v3.0.5/build/tmp/work/smarc_rzv2l-poky-linux/kernel-module-vspm/1.0-r0/git/vspm-module/files/vspm/drv/vspm	EXPORT_SYMBOL	
++0x00000000	vspm_entry_job	/home/lb/rzv_vlp_v3.0.5/build/tmp/work/smarc_rzv2l-poky-linux/kernel-module-vspm/1.0-r0/git/vspm-module/files/vspm/drv/vspm	EXPORT_SYMBOL	
++0x00000000	vspm_init_driver	/home/lb/rzv_vlp_v3.0.5/build/tmp/work/smarc_rzv2l-poky-linux/kernel-module-vspm/1.0-r0/git/vspm-module/files/vspm/drv/vspm	EXPORT_SYMBOL	
+diff --git a/include/vspm_cmn.h b/include/vspm_cmn.h
+new file mode 100644
+index 000000000..78f0bfc1e
+--- /dev/null
++++ b/include/vspm_cmn.h
+@@ -0,0 +1,169 @@
++/*************************************************************************/ /*
++ * VSPM
++ *
++ * Copyright (C) 2015-2021 Renesas Electronics Corporation
++ *
++ * License        Dual MIT/GPLv2
++ *
++ * The contents of this file are subject to the MIT license as set out below.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * Alternatively, the contents of this file may be used under the terms of
++ * the GNU General Public License Version 2 ("GPL") in which case the provisions
++ * of GPL are applicable instead of those above.
++ *
++ * If you wish to allow use of your version of this file only under the terms of
++ * GPL, and not to allow others to use your version of this file under the terms
++ * of the MIT license, indicate your decision by deleting the provisions above
++ * and replace them with the notice and other provisions required by GPL as set
++ * out in the file called "GPL-COPYING" included in this distribution. If you do
++ * not delete the provisions above, a recipient may use your version of this
++ * file under the terms of either the MIT license or GPL.
++ *
++ * This License is also included in this distribution in the file called
++ * "MIT-COPYING".
++ *
++ * EXCEPT AS OTHERWISE STATED IN A NEGOTIATED AGREEMENT: (A) THE SOFTWARE IS
++ * PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
++ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
++ * PARTICULAR PURPOSE AND NONINFRINGEMENT; AND (B) IN NO EVENT SHALL THE AUTHORS
++ * OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
++ * IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ *
++ *
++ * GPLv2:
++ * If you wish to use this file under the terms of GPL, following terms are
++ * effective.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */ /*************************************************************************/
++
++#ifndef _VSPM_API_H_
++#define _VSPM_API_H_
++
++/* VSP Manager APIs return codes */
++#define R_VSPM_OK			(0)
++#define	R_VSPM_NG			(-1)	/* abnormal termination */
++#define	R_VSPM_PARAERR		(-2)	/* illegal parameter */
++#define	R_VSPM_SEQERR		(-3)	/* sequence error */
++#define R_VSPM_QUE_FULL		(-4)	/* request queue full */
++#define R_VSPM_CANCEL		(-5)	/* processing was canceled */
++#define R_VSPM_ALREADY_USED	(-6)	/* already used all channel */
++#define R_VSPM_OCCUPY_CH	(-7)	/* occupy channel */
++#define R_VSPM_DRIVER_ERR	(-10)	/* IP error(in driver) */
++
++/* using channel */
++#define VSPM_EMPTY_CH		(0xFFFFFFFF)
++#define VSPM_USE_CH0		(0x00000001)
++#define VSPM_USE_CH1		(0x00000002)
++#define VSPM_USE_CH2		(0x00000004)
++#define VSPM_USE_CH3		(0x00000008)
++#define VSPM_USE_CH4		(0x00000010)
++#define VSPM_USE_CH5		(0x00000020)
++#define VSPM_USE_CH6		(0x00000040)
++#define VSPM_USE_CH7		(0x00000080)
++
++/* operation mode */
++enum {
++	VSPM_MODE_MUTUAL = 0,
++	VSPM_MODE_OCCUPY
++};
++
++/* select IP */
++enum {
++	VSPM_TYPE_VSP_AUTO = 0,
++	VSPM_TYPE_FDP_AUTO ,
++	VSPM_TYPE_ISU_AUTO
++};
++
++/* Job priority */
++#define VSPM_PRI_MAX		((char)126)
++#define VSPM_PRI_MIN		((char)1)
++
++#define VSPM_PRI_LOW		((char)32)
++#define VSPM_PRI_STD		((char)64)
++#define VSPM_PRI_HIGH		((char)96)
++
++/* State of the entry */
++#define VSPM_STATUS_WAIT		1
++#define VSPM_STATUS_ACTIVE		2
++#define VSPM_STATUS_NO_ENTRY	3
++
++/* Renesas near-lossless compression setting */
++#define FCP_FCNL_DISABLE		(0)
++#define FCP_FCNL_ENABLE			(1)
++
++/* Tile/Linear conversion setting */
++#define FCP_TL_DISABLE			(0)
++#define FCP_TL_ENABLE			(1)
++
++struct vspm_init_vsp_t {
++	/* reserved */
++};
++
++struct vspm_init_fdp_t {
++	unsigned int hard_addr[2];
++};
++
++/* initialize parameter structure */
++struct vspm_init_t {
++	unsigned int use_ch;
++	unsigned short mode;
++	unsigned short type;
++	union {
++		struct vspm_init_vsp_t *vsp;
++		struct vspm_init_vsp_t *isu;
++		struct vspm_init_fdp_t *fdp;
++	} par;
++};
++
++/* entry parameter structure */
++struct vspm_job_t {
++	unsigned short type;
++	union {
++		struct vsp_start_t *vsp;
++		struct fdp_start_t *fdp;
++		struct isu_start_t *isu;
++	} par;
++};
++
++/* status parameter structure */
++struct vspm_status_t {
++	struct fdp_status_t *fdp;
++};
++
++/* FCP information structure */
++struct fcp_info_t {
++	unsigned char fcnl;
++	unsigned char tlen;
++	unsigned short pos_y;
++	unsigned short pos_c;
++	unsigned short stride_div16;
++	unsigned int ba_anc_prev_y;
++	unsigned int ba_anc_cur_y;
++	unsigned int ba_anc_next_y;
++	unsigned int ba_anc_cur_c;
++	unsigned int ba_ref_prev_y;
++	unsigned int ba_ref_cur_y;
++	unsigned int ba_ref_next_y;
++	unsigned int ba_ref_cur_c;
++};
++
++#endif
+diff --git a/include/vspm_if.h b/include/vspm_if.h
+new file mode 100644
+index 000000000..6a451b020
+--- /dev/null
++++ b/include/vspm_if.h
+@@ -0,0 +1,518 @@
++/*************************************************************************/ /*
++ * VSPM
++ *
++ * Copyright (C) 2015-2017 Renesas Electronics Corporation
++ *
++ * License        Dual MIT/GPLv2
++ *
++ * The contents of this file are subject to the MIT license as set out below.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * Alternatively, the contents of this file may be used under the terms of
++ * the GNU General Public License Version 2 ("GPL") in which case the provisions
++ * of GPL are applicable instead of those above.
++ *
++ * If you wish to allow use of your version of this file only under the terms of
++ * GPL, and not to allow others to use your version of this file under the terms
++ * of the MIT license, indicate your decision by deleting the provisions above
++ * and replace them with the notice and other provisions required by GPL as set
++ * out in the file called "GPL-COPYING" included in this distribution. If you do
++ * not delete the provisions above, a recipient may use your version of this
++ * file under the terms of either the MIT license or GPL.
++ *
++ * This License is also included in this distribution in the file called
++ * "MIT-COPYING".
++ *
++ * EXCEPT AS OTHERWISE STATED IN A NEGOTIATED AGREEMENT: (A) THE SOFTWARE IS
++ * PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
++ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
++ * PARTICULAR PURPOSE AND NONINFRINGEMENT; AND (B) IN NO EVENT SHALL THE AUTHORS
++ * OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
++ * IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ *
++ *
++ * GPLv2:
++ * If you wish to use this file under the terms of GPL, following terms are
++ * effective.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */ /*************************************************************************/
++
++#ifndef __VSPM_IF_H__
++#define __VSPM_IF_H__
++
++#define DEVFILE		"vspm_if"
++
++/* common */
++enum {
++	VSPM_CMD_INIT = 0,
++	VSPM_CMD_QUIT,
++	VSPM_CMD_ENTRY,
++	VSPM_CMD_CANCEL,
++	VSPM_CMD_GET_STATUS,
++	VSPM_CMD_WAIT_INTERRUPT,
++	VSPM_CMD_WAIT_THREAD,
++	VSPM_CMD_STOP_THREAD,
++};
++
++#define VSPM_IOC_MAGIC 'v'
++
++/* for 64bit */
++struct vspm_if_entry_t {
++	struct vspm_if_entry_req_t {
++		char priority;
++		struct vspm_job_t *job_param;
++		void *user_data;
++		void *cb_func;
++	} req;
++	struct vspm_if_entry_rsp_t {
++		long ercd;
++		unsigned long job_id;
++	} rsp;
++};
++
++struct vspm_if_cb_rsp_t {
++	long ercd;
++	void *cb_func;
++	unsigned long job_id;
++	long result;
++	void *user_data;
++};
++
++#define VSPM_IOC_CMD_INIT \
++	_IOR(VSPM_IOC_MAGIC, VSPM_CMD_INIT, struct vspm_init_t)
++#define VSPM_IOC_CMD_QUIT \
++	_IO(VSPM_IOC_MAGIC, VSPM_CMD_QUIT)
++#define VSPM_IOC_CMD_ENTRY \
++	_IOWR(VSPM_IOC_MAGIC, VSPM_CMD_ENTRY, struct vspm_if_entry_t)
++#define VSPM_IOC_CMD_CANCEL \
++	_IOR(VSPM_IOC_MAGIC, VSPM_CMD_CANCEL, unsigned long)
++#define VSPM_IOC_CMD_GET_STATUS \
++	_IOWR(VSPM_IOC_MAGIC, VSPM_CMD_GET_STATUS, struct vspm_status_t)
++#define VSPM_IOC_CMD_WAIT_INTERRUPT \
++	_IOWR(VSPM_IOC_MAGIC, VSPM_CMD_WAIT_INTERRUPT, struct vspm_if_cb_rsp_t)
++#define VSPM_IOC_CMD_WAIT_THREAD \
++	_IO(VSPM_IOC_MAGIC, VSPM_CMD_WAIT_THREAD)
++#define VSPM_IOC_CMD_STOP_THREAD \
++	_IO(VSPM_IOC_MAGIC, VSPM_CMD_STOP_THREAD)
++
++/* for 32bit */
++struct vspm_compat_init_t {
++	unsigned int use_ch;
++	unsigned short mode;
++	unsigned short type;
++	union {
++		unsigned int vsp;
++		unsigned int fdp;
++		unsigned int isu;
++	} par;
++};
++
++struct vspm_compat_entry_t {
++	struct vspm_compat_entry_req_t {
++		char priority;
++		unsigned int job_param;
++		unsigned int user_data;
++		unsigned int cb_func;
++	} req;
++	struct vspm_compat_entry_rsp_t {
++		int ercd;
++		unsigned int job_id;
++	} rsp;
++};
++
++struct vspm_compat_job_t {
++	unsigned short type;
++	union {
++		unsigned int vsp;
++		unsigned int fdp;
++		unsigned int isu;
++	} par;
++};
++
++struct compat_vsp_dl_t {
++	unsigned int hard_addr;
++	unsigned int virt_addr;
++	unsigned short tbl_num;
++	unsigned int mem_par;
++};
++
++struct compat_vsp_irop_unit_t {
++	unsigned char op_mode;
++	unsigned char ref_sel;
++	unsigned char bit_sel;
++	unsigned int comp_color;
++	unsigned int irop_color0;
++	unsigned int irop_color1;
++};
++
++struct compat_vsp_ckey_unit_t {
++	unsigned char mode;
++	unsigned int color1;
++	unsigned int color2;
++};
++
++struct compat_vsp_alpha_unit_t {
++	unsigned int addr_a;
++	unsigned short stride_a;
++	unsigned char swap;
++	unsigned char asel;
++	unsigned char aext;
++	unsigned char anum0;
++	unsigned char anum1;
++	unsigned char afix;
++	unsigned int irop;
++	unsigned int ckey;
++	unsigned int mult;
++};
++
++struct compat_vsp_src_t {
++	unsigned int addr;
++	unsigned int addr_c0;
++	unsigned int addr_c1;
++	unsigned short stride;
++	unsigned short stride_c;
++	unsigned short width;
++	unsigned short height;
++	unsigned short width_ex;
++	unsigned short height_ex;
++	unsigned short x_offset;
++	unsigned short y_offset;
++	unsigned short format;
++	unsigned char swap;
++	unsigned short x_position;
++	unsigned short y_position;
++	unsigned char pwd;
++	unsigned char cipm;
++	unsigned char cext;
++	unsigned char csc;
++	unsigned char iturbt;
++	unsigned char clrcng;
++	unsigned char vir;
++	unsigned int vircolor;
++	unsigned int clut;
++	unsigned int alpha;
++	unsigned int connect;
++};
++
++struct compat_vsp_dst_t {
++	unsigned int addr;
++	unsigned int addr_c0;
++	unsigned int addr_c1;
++	unsigned short stride;
++	unsigned short stride_c;
++	unsigned short width;
++	unsigned short height;
++	unsigned short x_offset;
++	unsigned short y_offset;
++	unsigned short format;
++	unsigned char swap;
++	unsigned char pxa;
++	unsigned char pad;
++	unsigned short x_coffset;
++	unsigned short y_coffset;
++	unsigned char csc;
++	unsigned char iturbt;
++	unsigned char clrcng;
++	unsigned char cbrm;
++	unsigned char abrm;
++	unsigned char athres;
++	unsigned char clmd;
++	unsigned char dith;
++	unsigned char rotation;
++	unsigned int fcp;
++};
++
++struct compat_vsp_sru_t {
++	unsigned char mode;
++	unsigned char param;
++	unsigned short enscl;
++	unsigned char fxa;
++	unsigned int connect;
++};
++
++struct compat_vsp_uds_t {
++	unsigned char amd;
++	unsigned char clip;
++	unsigned char alpha;
++	unsigned char complement;
++	unsigned char athres0;
++	unsigned char athres1;
++	unsigned char anum0;
++	unsigned char anum1;
++	unsigned char anum2;
++	unsigned short x_ratio;
++	unsigned short y_ratio;
++	unsigned int connect;
++};
++
++struct compat_vsp_lut_t {
++	struct compat_vsp_dl_t lut;
++	unsigned char fxa;
++	unsigned int connect;
++};
++
++struct compat_vsp_clu_t {
++	unsigned char mode;
++	struct compat_vsp_dl_t clu;
++	unsigned char fxa;
++	unsigned int connect;
++};
++
++struct compat_vsp_hst_t {
++	unsigned char fxa;
++	unsigned int connect;
++};
++
++struct compat_vsp_hsi_t {
++	unsigned char fxa;
++	unsigned int connect;
++};
++
++struct compat_vsp_bld_vir_t {
++	unsigned short width;
++	unsigned short height;
++	unsigned short x_position;
++	unsigned short y_position;
++	unsigned char pwd;
++	unsigned int color;
++};
++
++struct compat_vsp_bru_t {
++	unsigned int lay_order;
++	unsigned char adiv;
++	unsigned int dither_unit[5];
++	unsigned int blend_virtual;
++	unsigned int blend_unit[5];
++	unsigned int rop_unit;
++	unsigned int connect;
++};
++
++struct compat_vsp_hgo_t {
++	unsigned int hard_addr;
++	unsigned int virt_addr;
++	unsigned int mem_par;
++	unsigned short width;
++	unsigned short height;
++	unsigned short x_offset;
++	unsigned short y_offset;
++	unsigned char binary_mode;
++	unsigned char maxrgb_mode;
++	unsigned char step_mode;
++	unsigned short x_skip;
++	unsigned short y_skip;
++	unsigned int sampling;
++};
++
++struct compat_vsp_hgt_t {
++	unsigned int hard_addr;
++	unsigned int virt_addr;
++	unsigned int mem_par;
++	unsigned short width;
++	unsigned short height;
++	unsigned short x_offset;
++	unsigned short y_offset;
++	unsigned short x_skip;
++	unsigned short y_skip;
++	struct vsp_hue_area_t area[6];
++	unsigned int sampling;
++};
++
++struct compat_vsp_shp_t {
++	unsigned char mode;
++	unsigned char gain0;
++	unsigned char limit0;
++	unsigned char gain10;
++	unsigned char limit10;
++	unsigned char gain11;
++	unsigned char limit11;
++	unsigned char gain20;
++	unsigned char limit20;
++	unsigned char gain21;
++	unsigned char limit21;
++	unsigned char fxa;
++	unsigned int connect;
++};
++
++struct compat_vsp_ctrl_t {
++	unsigned int sru;
++	unsigned int uds;
++	unsigned int lut;
++	unsigned int clu;
++	unsigned int hst;
++	unsigned int hsi;
++	unsigned int bru;
++	unsigned int hgo;
++	unsigned int hgt;
++	unsigned int shp;
++};
++
++struct compat_vsp_start_t {
++	unsigned char rpf_num;
++	unsigned int rpf_order;
++	unsigned int use_module;
++	unsigned int src_par[5];
++	unsigned int dst_par;
++	unsigned int ctrl_par;
++	struct compat_vsp_dl_t dl_par;
++};
++
++/* ISU */
++struct compat_isu_alpha_unit_t {
++        unsigned char asel;
++        unsigned char anum0;
++        unsigned char anum1;
++        unsigned char anum2;
++        unsigned char athres0;
++        unsigned char athres1;
++};
++
++struct compat_isu_td_unit_t {
++	unsigned char	grada_mode;
++	unsigned char	grada_step;
++	unsigned int 	init_val;
++};
++
++struct compat_isu_csc_t {
++        unsigned char           csc;
++        unsigned short          offset[3][2];
++        unsigned short          clip[3][2];
++        unsigned short          k_matrix[3][3];
++};
++
++struct compat_isu_src_t {
++        unsigned int           addr;
++        unsigned int           addr_c;
++        unsigned short          stride;
++        unsigned short          stride_c;
++        unsigned short          width;
++        unsigned short          height;
++        unsigned char           format;
++        unsigned char           swap;
++        unsigned int 		td;
++        unsigned int		alpha;
++        unsigned char           uv_conv;
++};
++struct compat_isu_dst_t {
++        unsigned int           addr;
++        unsigned int           addr_c;
++        unsigned short          stride;
++        unsigned short          stride_c;
++        unsigned char           format;
++        unsigned char           swap;
++        unsigned int            csc;
++	unsigned int		alpha;
++};
++struct compat_isu_rs_t {
++        unsigned short   start_x;
++        unsigned short   start_y;
++        unsigned short   tune_x;
++        unsigned short   tune_y;
++        unsigned short   crop_w;
++        unsigned short   crop_h;
++        unsigned char    pad_mode;
++        unsigned int     pad_val;
++        unsigned int     x_ratio;
++        unsigned int     y_ratio;
++};
++struct compat_isu_start_t {
++        unsigned int src_par;
++        unsigned int dst_par;
++        unsigned int rs_par;
++        unsigned int dl_hard_addr;
++};
++
++/*FDP */
++struct compat_fdp_pic_t {
++	unsigned int picid;
++	unsigned char chroma_format;
++	unsigned short width;
++	unsigned short height;
++	unsigned char progressive_sequence;
++	unsigned char progressive_frame;
++	unsigned char picture_structure;
++	unsigned char repeat_first_field;
++	unsigned char top_field_first;
++};
++
++struct compat_fdp_refbuf_t {
++	unsigned int next_buf;
++	unsigned int cur_buf;
++	unsigned int prev_buf;
++};
++
++struct compat_fdp_fproc_t {
++	unsigned int seq_par;
++	unsigned int in_pic;
++	unsigned char last_seq_indicator;
++	unsigned char current_field;
++	unsigned char interpolated_line;
++	unsigned char out_format;
++	unsigned int out_buf;
++	unsigned int ref_buf;
++	unsigned int fcp_par;
++	unsigned int ipc_par;
++};
++
++struct compat_fdp_start_t {
++	unsigned char fdpgo;
++	unsigned int fproc_par;
++};
++
++struct vspm_compat_status_t {
++	unsigned int fdp;
++};
++
++struct compat_fdp_status_t {
++	unsigned int picid;
++	unsigned int vcycle;
++	unsigned int sensor[18];
++};
++
++struct vspm_compat_cb_rsp_t {
++	int ercd;
++	unsigned int cb_func;
++	unsigned int job_id;
++	int result;
++	unsigned int user_data;
++};
++
++#define VSPM_IOC_CMD_INIT32 \
++	_IOR(VSPM_IOC_MAGIC, \
++	VSPM_CMD_INIT, \
++	struct vspm_compat_init_t)
++#define VSPM_IOC_CMD_ENTRY32 \
++	_IOWR(VSPM_IOC_MAGIC, \
++	VSPM_CMD_ENTRY, \
++	struct vspm_compat_entry_t)
++#define VSPM_IOC_CMD_CANCEL32 \
++	_IOR(VSPM_IOC_MAGIC, \
++	VSPM_CMD_CANCEL, \
++	unsigned int)
++#define VSPM_IOC_CMD_GET_STATUS32 \
++	_IOWR(VSPM_IOC_MAGIC, \
++	VSPM_CMD_GET_STATUS, \
++	struct vspm_compat_status_t)
++#define VSPM_IOC_CMD_WAIT_INTERRUPT32 \
++	_IOWR(VSPM_IOC_MAGIC, \
++	VSPM_CMD_WAIT_INTERRUPT, \
++	struct vspm_compat_cb_rsp_t)
++
++#endif /* __VSPM_IF_H__ */
+diff --git a/include/vspm_if.symvers b/include/vspm_if.symvers
+new file mode 100644
+index 000000000..e69de29bb
+diff --git a/include/vspm_public.h b/include/vspm_public.h
+new file mode 100644
+index 000000000..0dca03f17
+--- /dev/null
++++ b/include/vspm_public.h
+@@ -0,0 +1,94 @@
++/*************************************************************************/ /*
++ * VSPM
++ *
++ * Copyright (C) 2015-2021 Renesas Electronics Corporation
++ *
++ * License        Dual MIT/GPLv2
++ *
++ * The contents of this file are subject to the MIT license as set out below.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * Alternatively, the contents of this file may be used under the terms of
++ * the GNU General Public License Version 2 ("GPL") in which case the provisions
++ * of GPL are applicable instead of those above.
++ *
++ * If you wish to allow use of your version of this file only under the terms of
++ * GPL, and not to allow others to use your version of this file under the terms
++ * of the MIT license, indicate your decision by deleting the provisions above
++ * and replace them with the notice and other provisions required by GPL as set
++ * out in the file called "GPL-COPYING" included in this distribution. If you do
++ * not delete the provisions above, a recipient may use your version of this
++ * file under the terms of either the MIT license or GPL.
++ *
++ * This License is also included in this distribution in the file called
++ * "MIT-COPYING".
++ *
++ * EXCEPT AS OTHERWISE STATED IN A NEGOTIATED AGREEMENT: (A) THE SOFTWARE IS
++ * PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
++ * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
++ * PARTICULAR PURPOSE AND NONINFRINGEMENT; AND (B) IN NO EVENT SHALL THE AUTHORS
++ * OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
++ * IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ *
++ *
++ * GPLv2:
++ * If you wish to use this file under the terms of GPL, following terms are
++ * effective.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; version 2 of the License.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */ /*************************************************************************/
++
++#ifndef __VSPM_PUBLIC_H__
++#define __VSPM_PUBLIC_H__
++
++#include "vsp_drv.h"
++#include "fdp_drv.h"
++#include "isu_drv.h"
++#include "vspm_cmn.h"
++
++/* callback function */
++typedef void (*PFN_VSPM_COMPLETE_CALLBACK)(
++	unsigned long job_id, long result, void *user_data);
++
++/* VSP Manager APIs */
++long vspm_init_driver(
++	void **handle,
++	struct vspm_init_t *param);
++
++long vspm_quit_driver(
++	void *handle);
++
++long vspm_entry_job(
++	void *handle,
++	unsigned long *job_id,
++	char job_priority,
++	struct vspm_job_t *ip_param,
++	void *user_data,
++	PFN_VSPM_COMPLETE_CALLBACK cb_func);
++
++long vspm_cancel_job(
++	void *handle,
++	unsigned long job_id);
++
++long vspm_get_status(
++	void *handle,
++	struct vspm_status_t *status);
++
++#endif	/* __VSPM_PUBLIC_H__ */
+-- 
+2.25.1
+
