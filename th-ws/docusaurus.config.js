@@ -119,11 +119,11 @@ const config = {
             position: 'left',
             label: 'Docs',
           },
-          { 
+          /*{ 
             to: '/aboutme', 
             label: 'About', 
             position: 'left'
-          },
+          },*/
           {
             to: '/blog', 
             label: 'Blog', 
