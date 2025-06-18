@@ -111,17 +111,17 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
-            label: 'My Tutorials',
+            label: 'Tutorials',
           },
           {
             type: 'docSidebar',
             sidebarId: 'mydocsSidebar',
             position: 'left',
-            label: 'My Docs',
+            label: 'Docs',
           },
           { 
             to: '/aboutme', 
-            label: 'About Me', 
+            label: 'About', 
             position: 'left'
           },
           {
