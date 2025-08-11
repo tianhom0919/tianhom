@@ -80,7 +80,10 @@ const config = {
           truncateMarker: /<!--\s*(truncate)\s*-->/,
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: [
+            require.resolve('./src/css/custom.css'),
+            require.resolve("@slashid/react/style.css")
+          ],
         },
       }),
     ],
@@ -119,11 +122,11 @@ const config = {
             position: 'left',
             label: 'Docs',
           },
-          /*{ 
-            to: '/aboutme', 
-            label: 'About', 
-            position: 'left'
-          },*/
+          { 
+            type: "custom-AuthButton",
+            position: "right",
+            className: "button button--secondary button--lg",
+          },
           {
             to: '/blog', 
             label: 'Blog', 
@@ -142,15 +145,7 @@ const config = {
           autoCollapseCategories: true,
         },
       },
-      algolia: {
-        // Search only API key
-        apiKey: "dab0daae85eb4a6b05722fb0310a43ce",
-        indexName: "tianhom0919io",
-        appId: "EIU2FC21C0",
-        contextualSearch: false,
-        debug: false,
-        searchPagePath: 'search',
-      },
+      
       footer: {
         style: 'dark',
         links: [
@@ -188,9 +183,39 @@ const config = {
         ],
         copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
       },
+
+      algolia: {
+        // Search only API key
+        apiKey: "dab0daae85eb4a6b05722fb0310a43ce",
+        indexName: "tianhom0919io",
+        appId: "EIU2FC21C0",
+        contextualSearch: false,
+        debug: false,
+        searchPagePath: 'search',
+      },
+
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
+      },
+
+      slashID: {
+        orgID: "30ae44a3-bb23-baa0-d0f7-7be7eb2dad67", // your SlashID organization ID
+        forceLogin: true, // require login regardless of other settings
+        uxMode: "redirect", // or "modal"
+        privateRedirectPath: "/",
+        privatePaths: [
+          {
+            path: "/docs/**",
+          },
+        ],
+        formConfiguration: {
+          factors: [{ method: "email_link" }],
+          logo: "https://github.com/tianhom0919.png",
+          text: {
+            "initial.title": "Login",
+          },
+        },
       },
     }),
 };
