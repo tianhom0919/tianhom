@@ -19,7 +19,7 @@ const config = {
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/tianhom/',
-  themes: ["@slashid/docusaurus-theme-slashid"],
+  // themes: ["@slashid/docusaurus-theme-slashid"],
   trailingSlash: false, 
 
   // GitHub pages deployment config.
@@ -123,11 +123,11 @@ const config = {
             position: 'left',
             label: 'Docs',
           },
-          { 
+          /*{ 
             type: "custom-AuthButton",
             position: "right",
             className: "button button--secondary button--lg",
-          },
+          },*/
           {
             to: '/blog', 
             label: 'Blog', 
