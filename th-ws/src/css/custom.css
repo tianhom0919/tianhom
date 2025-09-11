@@ -9,7 +9,7 @@
   src:
     url('/static/fonts/Inter-Regular.woff2') format('woff2 supports variations'),
     url('/static/fonts/Inter-Regular.woff2') format('woff2-variations');
-  font-weight: 200 900;
+
 }
 
 @font-face {
@@ -17,7 +17,7 @@
   src:
     url('/static/fonts/Inter-Bold.woff2') format('woff2 supports variations'),
     url('/static/fonts/Inter-Bold.woff2') format('woff2-variations');
-  font-weight: 200 900;
+
 }
 
 /* You can override the default Infima variables here. */
