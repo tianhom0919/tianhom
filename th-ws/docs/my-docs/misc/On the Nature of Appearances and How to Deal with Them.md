@@ -23,6 +23,6 @@ The root of our distress is wanting reality to be different from what it is. If 
 
 # References
 
-- [Discourses of Epictetus](https://en.wikipedia.org/wiki/Discourses_of_Epictetus#:~:text=The%20Discourses%20of%20Epictetus%20(Greek,of%20Epictetus%20is%20intensely%20practical.)
+- [**A Selection from the Discourses of Epictetus with the Encheiridion by Epictetus**](https://www.gutenberg.org/ebooks/10661)
 
 ---
