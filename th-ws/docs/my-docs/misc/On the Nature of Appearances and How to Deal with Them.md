@@ -1,4 +1,8 @@
-# **On the Nature of Appearances and How to Deal with Them**  
+---
+sidebar_position: 1
+---
+
+# On the Nature of Appearances and How to Deal with Them
   
 Appearances, or how things seem to us, fall into four types:  
   
