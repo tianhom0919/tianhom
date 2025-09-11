@@ -13,6 +13,14 @@
 }
 
 @font-face {
+  font-family: 'Inter Bold';
+  src:
+    url('/static/fonts/Inter-Bold.woff2') format('woff2 supports variations'),
+    url('/static/fonts/Inter-Bold.woff2') format('woff2-variations');
+
+}
+
+@font-face {
   font-family: 'Inter Black';
   src:
     url('/static/fonts/Inter-Black.woff2') format('woff2 supports variations'),
@@ -152,7 +160,7 @@ html {
 
 h1,
 h2 {
-  font-family: 'Inter Thin';
+  font-family: 'Inter Bold';
   text-shadow: 1px 1px 2px #000, 0 0 0.05em #fff, 0 0 0.005em #fff;
 }
 
