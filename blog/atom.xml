@@ -13,7 +13,8 @@
         <link href="https://tianhom0919.github.io/tianhom/blog/2025/9/11/blog-2"/>
         <updated>2025-09-11T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[About LLMs]]></summary>
-        <content type="html"><![CDATA[<p>Large language models such as ChatGPT have proven to be very useful in software development, especially during debugging.</p>
+        <content type="html"><![CDATA[<p>A test</p>
+<p>Large language models such as ChatGPT have proven to be very useful in software development, especially during debugging.</p>
 <p>ChatGPT has been a lifesaver for software engineers, as they can:</p>
 <ul>
 <li>paste error messages to ask where the error might be</li>

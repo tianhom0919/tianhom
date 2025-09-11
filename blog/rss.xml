@@ -14,7 +14,8 @@
             <guid>https://tianhom0919.github.io/tianhom/blog/2025/9/11/blog-2</guid>
             <pubDate>Thu, 11 Sep 2025 00:00:00 GMT</pubDate>
             <description><![CDATA[About LLMs]]></description>
-            <content:encoded><![CDATA[<p>Large language models such as ChatGPT have proven to be very useful in software development, especially during debugging.</p>
+            <content:encoded><![CDATA[<p>A test</p>
+<p>Large language models such as ChatGPT have proven to be very useful in software development, especially during debugging.</p>
 <p>ChatGPT has been a lifesaver for software engineers, as they can:</p>
 <ul>
 <li>paste error messages to ask where the error might be</li>
