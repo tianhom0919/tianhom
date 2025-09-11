@@ -155,12 +155,12 @@
 }
 
 html {
-  font-family: 'Inter Black';
+  font-family: 'Inter Thin';
 }
 
 h1,
 h2 {
-  font-family: 'Inter Bold';
+  font-family: 'Inter Black';
   text-shadow: 1px 1px 2px #000, 0 0 0.05em #fff, 0 0 0.005em #fff;
 }
 
