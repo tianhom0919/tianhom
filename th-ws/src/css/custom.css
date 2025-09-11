@@ -5,18 +5,18 @@
  */
 
  @font-face {
-  font-family: 'Inter Regular';
+  font-family: 'Inter Thin';
   src:
-    url('/static/fonts/Inter-Regular.woff2') format('woff2 supports variations'),
-    url('/static/fonts/Inter-Regular.woff2') format('woff2-variations');
+    url('/static/fonts/Inter-Thin.woff2') format('woff2 supports variations'),
+    url('/static/fonts/Inter-Thin.woff2') format('woff2-variations');
 
 }
 
 @font-face {
-  font-family: 'Inter Bold';
+  font-family: 'Inter Black';
   src:
-    url('/static/fonts/Inter-Bold.woff2') format('woff2 supports variations'),
-    url('/static/fonts/Inter-Bold.woff2') format('woff2-variations');
+    url('/static/fonts/Inter-Black.woff2') format('woff2 supports variations'),
+    url('/static/fonts/Inter-Black.woff2') format('woff2-variations');
 
 }
 
@@ -147,12 +147,12 @@
 }
 
 html {
-  font-family: 'Inter Bold';
+  font-family: 'Inter Black';
 }
 
 h1,
 h2 {
-  font-family: 'Inter Regular';
+  font-family: 'Inter Thin';
   text-shadow: 1px 1px 2px #000, 0 0 0.05em #fff, 0 0 0.005em #fff;
 }
 
@@ -160,6 +160,6 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Inter Regular';
+  font-family: 'Inter Thin';
   text-shadow: 1px 1px 2px #000, 0 0 0.05em #fff, 0 0 0.005em #fff;
 }
