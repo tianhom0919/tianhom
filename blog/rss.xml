@@ -4,14 +4,40 @@
         <title>Welcome to my site! Blog</title>
         <link>https://tianhom0919.github.io/tianhom/blog</link>
         <description>Welcome to my site! Blog</description>
-        <lastBuildDate>Fri, 06 Dec 2024 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Thu, 11 Sep 2025 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
         <item>
+            <title><![CDATA[Blog]]></title>
+            <link>https://tianhom0919.github.io/tianhom/blog/2025/9/11/blog-2</link>
+            <guid>https://tianhom0919.github.io/tianhom/blog/2025/9/11/blog-2</guid>
+            <pubDate>Thu, 11 Sep 2025 00:00:00 GMT</pubDate>
+            <description><![CDATA[Blog]]></description>
+            <content:encoded><![CDATA[<p>Large language models such as ChatGPT have proven to be very useful in software development, especially during debugging.</p>
+<p>ChatGPT has been a lifesaver for software engineers as they can:</p>
+<ul>
+<li>paste error messages to ask where the error might be</li>
+<li>ask to clarify how a code snippet works</li>
+<li>explanations about fundamental concepts</li>
+<li>ask for code configuration</li>
+</ul>
+<h1>The Problem</h1>
+<p>The biggest problem with LLMs is perhaps, <a href="https://en.wikipedia.org/wiki/Hallucination_(artificial_intelligence)" target="_blank" rel="noopener noreferrer">hallucination</a>. Sometimes the answers generated may look very convincing even though they are completely wrong. When programming, the hallucinated code can be recognized and caught quickly if it does not work. Problematic situations arise when the code seems to work, but contains bugs or security vulnerabilities that are harder to detect.</p>
+<p>Another problem is that it is difficult for LLMs to "understand" larger projects. Usually in a large project, making changes in one file would require changes to several other files. There are token limits in ChatGPT. Once exceeded, older parts of the conversation or input will be forgotten. This means that LLMs are unable to generalize code, i.e. making minor changes for the requested functionality so that existing functions or components can be reused. This would result in the deterioration of the code base and decrease maintainability, as it generates a lot of repetitive code.</p>
+<p>In this case, the responsibility is with the programmer that uses language models. Quoting <a href="https://en.wikipedia.org/wiki/Brian_Kernighan" target="_blank" rel="noopener noreferrer">Brian Kerningham</a>, the co-author of <strong>The C Programming Language</strong>:</p>
+<blockquote>
+<p><em>“Everyone knows that debugging is twice as hard as writing a program in the first place. So if you're as clever as you can be when you write it, how will you ever debug it?”</em></p>
+<ul>
+<li><strong>Brian Kernighan</strong></li>
+</ul>
+</blockquote>
+<p>Simply put, it is not worth programming code you don't understand since debugging would be twice as hard as programming. How can debugging be even possible when the programming is outsourced to an LLM, where the software developer does not understand the debugged code at all?</p>]]></content:encoded>
+        </item>
+        <item>
             <title><![CDATA[My First Blog]]></title>
-            <link>https://tianhom0919.github.io/tianhom/blog/2024/12/06/welcome</link>
-            <guid>https://tianhom0919.github.io/tianhom/blog/2024/12/06/welcome</guid>
+            <link>https://tianhom0919.github.io/tianhom/blog/2024/12/06/blog-1</link>
+            <guid>https://tianhom0919.github.io/tianhom/blog/2024/12/06/blog-1</guid>
             <pubDate>Fri, 06 Dec 2024 00:00:00 GMT</pubDate>
             <description><![CDATA[My first blog]]></description>
             <content:encoded><![CDATA[<p>Here are a few tips you might find useful.</p>
