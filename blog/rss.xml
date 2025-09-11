@@ -14,8 +14,7 @@
             <guid>https://tianhom0919.github.io/tianhom/blog/2025/9/11/blog-2</guid>
             <pubDate>Thu, 11 Sep 2025 00:00:00 GMT</pubDate>
             <description><![CDATA[About LLMs]]></description>
-            <content:encoded><![CDATA[<p>A test</p>
-<p>Large language models such as ChatGPT have proven to be very useful in software development, especially during debugging.</p>
+            <content:encoded><![CDATA[<p>Large language models such as ChatGPT have proven to be very useful in software development, especially during debugging.</p>
 <p>ChatGPT has been a lifesaver for software engineers, as they can:</p>
 <ul>
 <li>paste error messages to ask where the error might be</li>
@@ -29,9 +28,7 @@
 <p>In this case, the responsibility lies with the programmer that uses language models. Quoting <a href="https://en.wikipedia.org/wiki/Brian_Kernighan" target="_blank" rel="noopener noreferrer">Brian Kerningham</a>, the co-author of <strong>The C Programming Language</strong>:</p>
 <blockquote>
 <p><em>“Everyone knows that debugging is twice as hard as writing a program in the first place. So if you're as clever as you can be when you write it, how will you ever debug it?”</em></p>
-<ul>
-<li><strong>Brian Kernighan</strong></li>
-</ul>
+<p><strong>Brian Kernighan</strong></p>
 </blockquote>
 <p>Simply put, it is not worth programming code you don't understand, since debugging will be twice as hard as programming. How can debugging be even possible when the programming is outsourced to an LLM, where the developer does not understand the debugged code at all?</p>]]></content:encoded>
         </item>
