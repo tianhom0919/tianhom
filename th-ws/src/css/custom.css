@@ -21,10 +21,10 @@
 }
 
 @font-face {
-  font-family: 'Inter Black';
+  font-family: 'Inter Regular';
   src:
-    url('/static/fonts/Inter-Black.woff2') format('woff2 supports variations'),
-    url('/static/fonts/Inter-Black.woff2') format('woff2-variations');
+    url('/static/fonts/Inter-Regular.woff2') format('woff2 supports variations'),
+    url('/static/fonts/Inter-Regular.woff2') format('woff2-variations');
 
 }
 
@@ -155,12 +155,12 @@
 }
 
 html {
-  font-family: 'Inter Thin';
+  font-family: 'Inter Regular';
 }
 
 h1,
 h2 {
-  font-family: 'Inter Black';
+  font-family: 'Inter Bold';
   text-shadow: 1px 1px 2px #000, 0 0 0.05em #fff, 0 0 0.005em #fff;
 }
 
