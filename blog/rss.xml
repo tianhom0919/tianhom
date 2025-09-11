@@ -9,11 +9,11 @@
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
         <item>
-            <title><![CDATA[Blog]]></title>
+            <title><![CDATA[About LLMs]]></title>
             <link>https://tianhom0919.github.io/tianhom/blog/2025/9/11/blog-2</link>
             <guid>https://tianhom0919.github.io/tianhom/blog/2025/9/11/blog-2</guid>
             <pubDate>Thu, 11 Sep 2025 00:00:00 GMT</pubDate>
-            <description><![CDATA[Blog]]></description>
+            <description><![CDATA[About LLMs]]></description>
             <content:encoded><![CDATA[<p>Large language models such as ChatGPT have proven to be very useful in software development, especially during debugging.</p>
 <p>ChatGPT has been a lifesaver for software engineers as they can:</p>
 <ul>
