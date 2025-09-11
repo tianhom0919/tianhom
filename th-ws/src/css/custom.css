@@ -5,19 +5,19 @@
  */
 
  @font-face {
-  font-family: 'Hubot Sans';
+  font-family: 'Inter Regular';
   src:
-    url('/static/fonts/Hubot-Sans.woff2') format('woff2 supports variations'),
-    url('/static/fonts/Hubot-Sans.woff2') format('woff2-variations');
+    url('/static/fonts/Inter-Regular.woff2') format('woff2 supports variations'),
+    url('/static/fonts/Inter-Regular.woff2') format('woff2-variations');
   font-weight: 200 900;
   font-stretch: 75% 125%;
 }
 
 @font-face {
-  font-family: 'Mona Sans';
+  font-family: 'Inter Bold';
   src:
-    url('/static/fonts/Mona-Sans.woff2') format('woff2 supports variations'),
-    url('/static/fonts/Mona-Sans.woff2') format('woff2-variations');
+    url('/static/fonts/Inter-Bold.woff2') format('woff2 supports variations'),
+    url('/static/fonts/Inter-Bold.woff2') format('woff2-variations');
   font-weight: 200 900;
   font-stretch: 75% 125%;
 }
@@ -149,12 +149,12 @@
 }
 
 html {
-  font-family: 'Mona Sans';
+  font-family: 'Inter Bold';
 }
 
 h1,
 h2 {
-  font-family: 'Hubot Sans';
+  font-family: 'Inter Regular';
   font-stretch: semi-condensed;
   text-shadow: 1px 1px 2px #000, 0 0 0.05em #fff, 0 0 0.005em #fff;
 }
@@ -163,7 +163,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Hubot Sans';
+  font-family: 'Inter Regular';
   font-stretch: semi-condensed;
   text-shadow: 1px 1px 2px #000, 0 0 0.05em #fff, 0 0 0.005em #fff;
 }
