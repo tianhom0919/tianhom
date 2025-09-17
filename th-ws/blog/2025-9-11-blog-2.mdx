@@ -21,6 +21,8 @@ ChatGPT has been a lifesaver for software engineers, as they can:
 
 The biggest problem with LLMs is perhaps [hallucination](https://en.wikipedia.org/wiki/Hallucination_(artificial_intelligence)). Sometimes the answers generated may look very convincing, even though they are completely wrong. When programming, hallucinated code can often be caught quickly if it does not work. Problematic situations arise when the code seems to work, but contains bugs or security vulnerabilities that are harder to detect.
 
+<!-- truncate -->
+
 Another problem is that LLMs struggle to "understand" larger projects. Usually in a large project, making changes in one file would require changes to several other files. Because of token limits in ChatGPT, older parts of the conversation or input will be forgotten. This means that the language model is unable to generalize code, i.e. making small adjustments to reuse existing functions or components. This would result in the deterioration of the code base and decrease maintainability, as it generates a lot of repetitive code.
 
 In this case, the responsibility lies with the programmer that uses language models. Quoting [Brian Kerningham](https://en.wikipedia.org/wiki/Brian_Kernighan), the co-author of **The C Programming Language**:
@@ -30,5 +32,3 @@ In this case, the responsibility lies with the programmer that uses language mod
 >**Brian Kernighan**
 
 Simply put, it is not worth programming code you don't understand, since debugging will be twice as hard as programming. How can debugging be even possible when the programming is outsourced to an LLM, where the developer does not understand the debugged code at all?
-
-<!-- truncate -->
